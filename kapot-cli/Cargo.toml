@@ -17,8 +17,8 @@
 
 [package]
 name = "kapot-cli"
+version = "0.1.0"
 description = "Command Line Client for Kapôt distributed query engine."
-version = "0.12.0"
 authors = ["André Claudino <claudino@d2x.com.br>"]
 edition = "2021"
 keywords = ["kapot", "cli"]
@@ -29,7 +29,7 @@ rust-version = "1.72"
 readme = "README.md"
 
 [dependencies]
-kapot = { path = "../kapot/client", version = "0.12.0", features = ["standalone"] }
+kapot = { path = "../kapot/client", features = ["standalone"] }
 clap = { workspace = true }
 datafusion = { workspace = true }
 datafusion-cli = { workspace = true }
