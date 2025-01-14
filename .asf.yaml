@@ -16,9 +16,9 @@
 # under the License.
 
 notifications:
-  commits:      commits@datafusion.apache.org
-  issues:       github@datafusion.apache.org
-  pullrequests: github@datafusion.apache.org
+  commits:      kapot+commits@d2x.com.br
+  issues:       kapot+issues@d2x.com.br
+  pullrequests: kapot+pullrequests@d2x.com.br
   jira_options: link label worklog
 github:
   description: "Apache DataFusion kapot Distributed Query Engine"
@@ -35,8 +35,8 @@ github:
     - sql
   enabled_merge_buttons:
     squash: true
-    merge: false
-    rebase: false    
+    merge: true
+    rebase: true
   features:
     issues: true        
 # publishes the content of the `asf-site` branch to
