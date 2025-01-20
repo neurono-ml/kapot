@@ -2,7 +2,7 @@ name: Docker
 
 on:
   push:
-    tags: [ 'v*.*.*' ]
+    tags: [ 'v*.*.*', '*.*.*' ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -66,8 +66,6 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          build-args: |
-            binary_name=mongodb-uploader-data-fusion
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
