@@ -29,7 +29,7 @@ rust-version = "1.72"
 readme = "README.md"
 
 [dependencies]
-kapot = { path = "../kapot/client", features = ["standalone"] }
+kapot = { path = "../client", features = ["standalone"] }
 clap = { workspace = true }
 datafusion = { workspace = true }
 datafusion-cli = { workspace = true }

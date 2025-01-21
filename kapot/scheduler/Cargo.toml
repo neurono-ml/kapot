@@ -31,7 +31,7 @@ scheduler = "scheduler_config_spec.toml"
 
 [[bin]]
 name = "kapot-scheduler"
-path = "src/bin/main.rs"
+path = "src/main.rs"
 
 [features]
 default = ["etcd", "sled", "flight-sql"]

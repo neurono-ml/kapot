@@ -31,7 +31,7 @@ executor = "executor_config_spec.toml"
 
 [[bin]]
 name = "kapot-executor"
-path = "src/bin/main.rs"
+path = "src/main.rs"
 
 [features]
 default = ["mimalloc"]
