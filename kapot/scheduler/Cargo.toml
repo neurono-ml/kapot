@@ -46,7 +46,7 @@ anyhow = "1"
 log = { workspace = true }
 env_logger = { workspace = true }
 
-kapot-core = { path = "../core", features = ["s3"] }
+kapot-core = { path = "../core", features = ["object-stores"] }
 datafusion = { workspace = true }
 datafusion-proto = { workspace = true }
 

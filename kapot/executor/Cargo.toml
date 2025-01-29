@@ -41,7 +41,7 @@ anyhow = "1"
 arrow = { workspace = true }
 arrow-flight = { workspace = true }
 async-trait = "0.1.41"
-kapot-core = { path = "../core", features = ["s3"] }
+kapot-core = { path = "../core", features = ["object-stores"] }
 chrono = { version = "0.4", default-features = false }
 configure_me = { workspace = true }
 dashmap = { workspace = true }
