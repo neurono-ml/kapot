@@ -24,6 +24,8 @@ use datafusion::arrow::ipc::writer::IpcWriteOptions;
 use datafusion::arrow::ipc::CompressionType;
 
 use datafusion::arrow::ipc::writer::StreamWriter;
+use datafusion::physical_expr::EquivalenceProperties;
+use datafusion::physical_plan::execution_plan::{Boundedness, EmissionType};
 use std::any::Any;
 use std::fs;
 use std::fs::File;
@@ -133,9 +135,10 @@ impl ShuffleWriterExec {
             .clone()
             .unwrap_or_else(|| plan.properties().output_partitioning().clone());
         let properties = PlanProperties::new(
-            datafusion::physical_expr::EquivalenceProperties::new(plan.schema()),
+            EquivalenceProperties::new(plan.schema()),
             partitioning,
-            datafusion::physical_plan::ExecutionMode::Bounded,
+            EmissionType::Both,
+            Boundedness::Bounded,
         );
         Ok(Self {
             job_id,

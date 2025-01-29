@@ -21,6 +21,7 @@ use std::sync::Arc;
 use datafusion::arrow::datatypes::SchemaRef;
 use datafusion::error::{DataFusionError, Result};
 use datafusion::execution::context::TaskContext;
+use datafusion::physical_plan::execution_plan::{Boundedness, EmissionType};
 use datafusion::physical_plan::{
     DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, PlanProperties,
     SendableRecordBatchStream, Statistics,
@@ -56,7 +57,8 @@ impl UnresolvedShuffleExec {
             // TODO the output partition is known and should be populated here!
             // see https://github.com/apache/arrow-datafusion/issues/758
             Partitioning::UnknownPartitioning(output_partition_count),
-            datafusion::physical_plan::ExecutionMode::Bounded,
+            EmissionType::Both,
+            Boundedness::Bounded,
         );
         Self {
             stage_id,

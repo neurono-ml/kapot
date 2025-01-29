@@ -18,6 +18,8 @@
 use async_trait::async_trait;
 use datafusion::arrow::ipc::reader::StreamReader;
 use datafusion::common::stats::Precision;
+use datafusion::physical_expr::EquivalenceProperties;
+use datafusion::physical_plan::execution_plan::{Boundedness, EmissionType};
 use std::any::Any;
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -76,11 +78,12 @@ impl ShuffleReaderExec {
         schema: SchemaRef,
     ) -> Result<Self> {
         let properties = PlanProperties::new(
-            datafusion::physical_expr::EquivalenceProperties::new(schema.clone()),
+            EquivalenceProperties::new(schema.clone()),
             // TODO partitioning may be known and could be populated here
             // see https://github.com/apache/arrow-datafusion/issues/758
             Partitioning::UnknownPartitioning(partition.len()),
-            datafusion::physical_plan::ExecutionMode::Bounded,
+            EmissionType::Both,
+            Boundedness::Bounded,
         );
         Ok(Self {
             stage_id,

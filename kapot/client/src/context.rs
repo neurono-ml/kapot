@@ -319,13 +319,14 @@ impl KapotContext {
         let statements = DFParser::parse_sql(sql)?;
 
         if statements.len() != 1 {
+            // TODO: Implement for more statements
             return Err(DataFusionError::NotImplemented(
                 "The context currently only supports a single SQL statement".to_string(),
             ));
         }
 
-        if let DFStatement::Statement(st) = &statements[0] {
-            match **st {
+        if let DFStatement::Statement(statement) = &statements[0] {
+            match **statement {
                 Statement::ShowVariable { .. } => {
                     is_show_variable = true;
                 }

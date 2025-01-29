@@ -268,6 +268,7 @@ pub fn create_df_ctx_with_kapot_query_planner<T: 'static + AsLogicalPlan>(
     SessionContext::new_with_state(session_state)
 }
 
+#[derive(Debug)]
 pub struct KapotQueryPlanner<T: AsLogicalPlan> {
     scheduler_url: String,
     config: KapotConfig,

@@ -1086,19 +1086,17 @@ mod test {
     fn mock_scan_files(num_partition: usize) -> Vec<Vec<Vec<PartitionedFile>>> {
         let mut scan_files = vec![];
         for i in 0..num_partition {
-            scan_files.push(vec![PartitionedFile {
-                object_meta: ObjectMeta {
-                    location: Path::from(format!("file--{}", i)),
-                    last_modified: Default::default(),
-                    size: 1,
-                    e_tag: None,
-                    version: None,
-                },
-                partition_values: vec![],
-                range: None,
-                extensions: None,
-                statistics: None,
-            }]);
+            
+            let object_metadata = ObjectMeta {
+                location: Path::from(format!("file--{}", i)),
+                last_modified: Default::default(),
+                size: 1,
+                e_tag: None,
+                version: None,
+            };
+
+            let partitioned_file = object_metadata.into();
+            scan_files.push(vec![partitioned_file]);
         }
         vec![scan_files]
     }

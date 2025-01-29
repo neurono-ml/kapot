@@ -20,7 +20,6 @@ use crate::{execution_loop, executor::Executor, flight_service::KapotFlightServi
 use arrow_flight::flight_service_server::FlightServiceServer;
 use kapot_core::{
     error::Result,
-    object_store_registry::with_object_store_registry,
     serde::protobuf::executor_registration::OptionalHost,
     serde::protobuf::{scheduler_grpc_client::SchedulerGrpcClient, ExecutorRegistration},
     serde::scheduler::ExecutorSpecification,
@@ -28,7 +27,7 @@ use kapot_core::{
     utils::create_grpc_server,
     KAPOT_VERSION,
 };
-use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv};
+use datafusion::execution::runtime_env::RuntimeEnvBuilder;
 use datafusion_proto::logical_plan::AsLogicalPlan;
 use datafusion_proto::physical_plan::AsExecutionPlan;
 use log::info;
@@ -47,7 +46,7 @@ pub async fn new_standalone_executor<
     codec: KapotCodec<T, U>,
 ) -> Result<()> {
     // Let the OS assign a random, free port
-    let listener = TcpListener::bind("localhost:0").await?;
+    let listener = TcpListener::bind("0.0.0.0:0").await?;
     let addr = listener.local_addr()?;
     info!(
         "kapot v{} Rust Executor listening on {:?}",
@@ -56,7 +55,7 @@ pub async fn new_standalone_executor<
 
     let executor_meta = ExecutorRegistration {
         id: Uuid::new_v4().to_string(), // assign this executor a unique ID
-        optional_host: Some(OptionalHost::Host("localhost".to_string())),
+        optional_host: Some(OptionalHost::Host("0.0.0.0".to_string())),
         port: addr.port() as u32,
         // TODO Make it configurable
         grpc_port: 50020,
@@ -74,14 +73,14 @@ pub async fn new_standalone_executor<
         .unwrap();
     info!("work_dir: {}", work_dir);
 
-    let config = with_object_store_registry(
-        RuntimeConfig::new().with_temp_file_path(work_dir.clone()),
-    );
+    let runtime = RuntimeEnvBuilder::new()
+        .with_temp_file_path(work_dir.clone())
+        .build()?;
 
     let executor = Arc::new(Executor::new(
         executor_meta,
         &work_dir,
-        Arc::new(RuntimeEnv::new(config).unwrap()),
+        Arc::new(runtime),
         None,
         Arc::new(LoggingMetricsCollector::default()),
         concurrent_tasks,

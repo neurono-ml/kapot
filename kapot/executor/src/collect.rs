@@ -25,6 +25,7 @@ use std::{any::Any, pin::Pin};
 use datafusion::arrow::{datatypes::SchemaRef, record_batch::RecordBatch};
 use datafusion::error::DataFusionError;
 use datafusion::execution::context::TaskContext;
+use datafusion::physical_plan::execution_plan::{Boundedness, EmissionType};
 use datafusion::physical_plan::{
     DisplayAs, DisplayFormatType, ExecutionPlan, Partitioning, PlanProperties,
     SendableRecordBatchStream, Statistics,
@@ -46,7 +47,8 @@ impl CollectExec {
         let properties = PlanProperties::new(
             datafusion::physical_expr::EquivalenceProperties::new(plan.schema()),
             Partitioning::UnknownPartitioning(1),
-            datafusion::physical_plan::ExecutionMode::Bounded,
+            EmissionType::Both,
+            Boundedness::Bounded,
         );
         Self { plan, properties }
     }

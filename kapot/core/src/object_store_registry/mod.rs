@@ -22,6 +22,7 @@ use datafusion::common::DataFusionError;
 use datafusion::datasource::object_store::{
     DefaultObjectStoreRegistry, ObjectStoreRegistry,
 };
+
 use datafusion::execution::runtime_env::RuntimeConfig;
 #[cfg(any(feature = "hdfs", feature = "hdfs3"))]
 use datafusion_objectstore_hdfs::object_store::hdfs::HadoopFileSystem;

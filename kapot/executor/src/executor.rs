@@ -215,6 +215,8 @@ mod test {
     use crate::metrics::LoggingMetricsCollector;
     use arrow::datatypes::{Schema, SchemaRef};
     use arrow::record_batch::RecordBatch;
+    use datafusion::physical_expr::EquivalenceProperties;
+    use datafusion::physical_plan::execution_plan::Boundedness;
     use kapot_core::execution_plans::ShuffleWriterExec;
     use kapot_core::serde::protobuf::ExecutorRegistration;
     use kapot_core::serde::scheduler::PartitionId;
@@ -262,13 +264,17 @@ mod test {
 
     impl NeverendingOperator {
         fn new() -> Self {
+            let equivalence_properties = EquivalenceProperties::new(Arc::new(
+                Schema::empty(),
+            ));
+
+
             NeverendingOperator {
                 properties: PlanProperties::new(
-                    datafusion::physical_expr::EquivalenceProperties::new(Arc::new(
-                        Schema::empty(),
-                    )),
+                    equivalence_properties,
                     Partitioning::UnknownPartitioning(1),
-                    datafusion::physical_plan::ExecutionMode::Bounded,
+                    datafusion::physical_plan::execution_plan::EmissionType::Both,
+                    Boundedness::Bounded,
                 ),
             }
         }
