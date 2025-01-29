@@ -87,7 +87,7 @@ impl KapotContext {
         host: &str,
         port: u16,
         config: &KapotConfig,
-    ) -> kapot_core::error::Result<Self> {
+    ) -> Result<Self> {
         let state = KapotContextState::new(host.to_owned(), port, config);
 
         let scheduler_url =
@@ -125,7 +125,7 @@ impl KapotContext {
             remote_session_id
         );
 
-        let ctx = {
+        let context = {
             create_df_ctx_with_kapot_query_planner::<LogicalPlanNode>(
                 scheduler_url,
                 remote_session_id,
@@ -135,7 +135,7 @@ impl KapotContext {
 
         Ok(Self {
             state: Arc::new(Mutex::new(state)),
-            context: Arc::new(ctx),
+            context: Arc::new(context),
         })
     }
 
@@ -182,7 +182,7 @@ impl KapotContext {
             remote_session_id
         );
 
-        let ctx = {
+        let context = {
             create_df_ctx_with_kapot_query_planner::<LogicalPlanNode>(
                 scheduler_url,
                 remote_session_id,
@@ -205,7 +205,7 @@ impl KapotContext {
 
         Ok(Self {
             state: Arc::new(Mutex::new(state)),
-            context: Arc::new(ctx),
+            context: Arc::new(context),
         })
     }
 

@@ -28,7 +28,7 @@ edition = "2021"
 rust-version = "1.72"
 
 [dependencies]
-kapot-core = { path = "../core" }
+kapot-core = { path = "../core", features = ["object-stores"] }
 kapot-executor = { path = "../executor",  optional = true }
 kapot-scheduler = { path = "../scheduler", optional = true }
 

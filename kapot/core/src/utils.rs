@@ -20,7 +20,7 @@ use crate::error::{KapotError, Result};
 use crate::execution_plans::{
     DistributedQueryExec, ShuffleWriterExec, UnresolvedShuffleExec,
 };
-use crate::object_store_registry::with_object_store_registry;
+use crate::object_store_registry::{with_object_store_registry, KapotObjectStoreRegistry};
 use crate::serde::scheduler::PartitionStats;
 
 use async_trait::async_trait;
@@ -34,7 +34,7 @@ use datafusion::error::DataFusionError;
 use datafusion::execution::context::{
     QueryPlanner, SessionConfig, SessionContext, SessionState,
 };
-use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv};
+use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv, RuntimeEnvBuilder};
 use datafusion::execution::session_state::SessionStateBuilder;
 use datafusion::logical_expr::{DdlStatement, LogicalPlan};
 use datafusion::physical_plan::aggregates::AggregateExec;
@@ -254,18 +254,22 @@ pub fn create_df_ctx_with_kapot_query_planner<T: 'static + AsLogicalPlan>(
     let session_config = SessionConfig::new()
         .with_target_partitions(config.default_shuffle_partitions())
         .with_information_schema(true);
+    let object_store_registry = Arc::new(KapotObjectStoreRegistry::new());
+    // TODO: Convert this function into result, then remove the unwrap
+    let runtime = RuntimeEnvBuilder::new()
+        .with_object_store_registry(object_store_registry)
+        .build().unwrap();
     let session_state = SessionStateBuilder::new()
         .with_default_features()
         .with_config(session_config)
-        .with_runtime_env(Arc::new(
-            RuntimeEnv::new(with_object_store_registry(RuntimeConfig::default()))
-                .unwrap(),
-        ))
+        .with_runtime_env(Arc::new(runtime))
         .with_query_planner(planner)
         .with_session_id(session_id)
         .build();
+    
     // the SessionContext created here is the client side context, but the session_id is from server side.
-    SessionContext::new_with_state(session_state)
+    let session_context = SessionContext::new_with_state(session_state);
+    session_context
 }
 
 #[derive(Debug)]
