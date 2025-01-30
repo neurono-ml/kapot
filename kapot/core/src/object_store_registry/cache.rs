@@ -18,20 +18,10 @@
 use crate::cache_layer::object_store::file::FileCacheObjectStore;
 use crate::cache_layer::object_store::ObjectStoreWithKey;
 use crate::cache_layer::CacheLayer;
-use crate::object_store_registry::KapotObjectStoreRegistry;
 use datafusion::datasource::object_store::ObjectStoreRegistry;
-use datafusion::execution::runtime_env::RuntimeConfig;
 use object_store::ObjectStore;
 use std::sync::Arc;
 use url::Url;
-
-/// Get a RuntimeConfig with CachedBasedObjectStoreRegistry
-pub fn with_cache_layer(config: RuntimeConfig, cache_layer: CacheLayer) -> RuntimeConfig {
-    let registry = Arc::new(KapotObjectStoreRegistry::default());
-    let registry = Arc::new(CachedBasedObjectStoreRegistry::new(registry, cache_layer));
-    config.with_object_store_registry(registry)
-}
-
 /// An object store registry wrapped an existing one with a cache layer.
 ///
 /// During [`get_store`], after getting the source [`ObjectStore`], based on the url,

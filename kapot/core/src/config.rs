@@ -213,7 +213,7 @@ impl KapotConfig {
             ConfigEntry::new(KAPOT_GRPC_CLIENT_MAX_MESSAGE_SIZE.to_string(),
                              "Configuration for max message size in gRPC clients".to_string(),
                              DataType::UInt64,
-                             Some((16 * 1024 * 1024).to_string())),
+                             Some((128 * 1024 * 1024).to_string())),
         ];
         entries
             .iter()

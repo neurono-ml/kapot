@@ -25,8 +25,10 @@ use std::{env, io};
 
 use anyhow::{Context, Result};
 use arrow_flight::flight_service_server::FlightServiceServer;
+use datafusion::common::runtime;
 use futures::stream::FuturesUnordered;
 use futures::StreamExt;
+use kapot_core::object_store_registry::KapotObjectStoreRegistry;
 use log::{error, info, warn};
 use tempfile::TempDir;
 use tokio::fs::DirEntry;
@@ -37,7 +39,7 @@ use tokio::{fs, time};
 use tracing_subscriber::EnvFilter;
 use uuid::Uuid;
 
-use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv};
+use datafusion::execution::runtime_env::{RuntimeEnv, RuntimeEnvBuilder};
 use datafusion_proto::protobuf::{LogicalPlanNode, PhysicalPlanNode};
 
 #[cfg(not(windows))]
@@ -48,7 +50,6 @@ use kapot_core::config::{DataCachePolicy, LogRotationPolicy, TaskSchedulingPolic
 use kapot_core::error::KapotError;
 #[cfg(not(windows))]
 use kapot_core::object_store_registry::cache::CachedBasedObjectStoreRegistry;
-use kapot_core::object_store_registry::with_object_store_registry;
 use kapot_core::serde::protobuf::executor_resource::Resource;
 use kapot_core::serde::protobuf::executor_status::Status;
 use kapot_core::serde::protobuf::{
@@ -106,8 +107,8 @@ pub struct ExecutorProcessConfig {
 
 pub async fn start_executor_process(opt: Arc<ExecutorProcessConfig>) -> Result<()> {
     let rust_log = env::var(EnvFilter::DEFAULT_ENV);
-    let log_filter =
-        EnvFilter::new(rust_log.unwrap_or(opt.special_mod_log_level.clone()));
+    let log_filter = EnvFilter::new(rust_log.unwrap_or(opt.special_mod_log_level.clone()));
+    
     // File layer
     if let Some(log_dir) = opt.log_dir.clone() {
         let log_file = match opt.log_rotation_policy {
@@ -187,14 +188,12 @@ pub async fn start_executor_process(opt: Arc<ExecutorProcessConfig>) -> Result<(
         }),
     };
 
-    let config = RuntimeConfig::new().with_temp_file_path(work_dir.clone());
-    let runtime = {
-        let config = with_object_store_registry(config.clone());
-        Arc::new(RuntimeEnv::new(config).map_err(|_| {
-            KapotError::Internal("Failed to init Executor RuntimeEnv".to_owned())
-        })?)
-    };
-
+    let runtime_env = RuntimeEnvBuilder::new()
+        .with_object_store_registry(Arc::new(KapotObjectStoreRegistry::new()))
+        .with_temp_file_path(work_dir.clone())
+        .build()
+        .unwrap();
+    
     // Set the object store registry
     #[cfg(not(windows))]
     let runtime_with_data_cache = {
@@ -216,28 +215,26 @@ pub async fn start_executor_process(opt: Arc<ExecutorProcessConfig>) -> Result<(
                 });
         if let Some(cache_layer) = cache_layer {
             let registry = Arc::new(CachedBasedObjectStoreRegistry::new(
-                runtime.object_store_registry.clone(),
+                runtime_env.object_store_registry.clone(),
                 cache_layer,
             ));
             Some(Arc::new(RuntimeEnv {
-                memory_pool: runtime.memory_pool.clone(),
-                disk_manager: runtime.disk_manager.clone(),
-                cache_manager: runtime.cache_manager.clone(),
+                memory_pool: runtime_env.memory_pool.clone(),
+                disk_manager: runtime_env.disk_manager.clone(),
+                cache_manager: runtime_env.cache_manager.clone(),
                 object_store_registry: registry,
             }))
         } else {
             None
         }
     };
-    #[cfg(windows)]
-    let runtime_with_data_cache = { None };
 
     let metrics_collector = Arc::new(LoggingMetricsCollector::default());
 
     let executor = Arc::new(Executor::new(
         executor_meta,
         &work_dir,
-        runtime,
+        Arc::new(runtime_env),
         runtime_with_data_cache,
         metrics_collector,
         concurrent_tasks,
@@ -288,8 +285,7 @@ pub async fn start_executor_process(opt: Arc<ExecutorProcessConfig>) -> Result<(
         .max_encoding_message_size(opt.grpc_max_encoding_message_size as usize)
         .max_decoding_message_size(opt.grpc_max_decoding_message_size as usize);
 
-    let default_codec: KapotCodec<LogicalPlanNode, PhysicalPlanNode> =
-        KapotCodec::default();
+    let default_codec: KapotCodec<LogicalPlanNode, PhysicalPlanNode> = KapotCodec::default();
 
     let scheduler_policy = opt.task_scheduling_policy;
     let job_data_ttl_seconds = opt.job_data_ttl_seconds;

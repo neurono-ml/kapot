@@ -23,24 +23,16 @@ use datafusion::datasource::object_store::{
     DefaultObjectStoreRegistry, ObjectStoreRegistry,
 };
 
-use datafusion::execution::runtime_env::RuntimeConfig;
-#[cfg(any(feature = "hdfs", feature = "hdfs3"))]
-use datafusion_objectstore_hdfs::object_store::hdfs::HadoopFileSystem;
 #[cfg(feature = "s3")]
 use object_store::aws::AmazonS3Builder;
 #[cfg(feature = "azure")]
 use object_store::azure::MicrosoftAzureBuilder;
 #[cfg(feature = "gcs")]
 use object_store::gcp::GoogleCloudStorageBuilder;
+use object_store::local::LocalFileSystem;
 use object_store::ObjectStore;
 use std::sync::Arc;
 use url::Url;
-
-/// Get a RuntimeConfig with specific ObjectStoreRegistry
-pub fn with_object_store_registry(config: RuntimeConfig) -> RuntimeConfig {
-    let registry = Arc::new(KapotObjectStoreRegistry::default());
-    config.with_object_store_registry(registry)
-}
 
 /// An object store detector based on which features are enable for different kinds of object stores
 #[derive(Debug, Default)]
@@ -54,32 +46,34 @@ impl KapotObjectStoreRegistry {
     }
 
     /// Find a suitable object store based on its url and enabled features if possible
-    fn get_feature_store(
-        &self,
-        url: &Url,
-    ) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
-        #[cfg(any(feature = "hdfs", feature = "hdfs3"))]
-        {
-            if let Some(store) = HadoopFileSystem::new(url.as_str()) {
-                return Ok(Arc::new(store));
-            }
-        }
+    fn get_feature_store(&self, url: &Url) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
+
+        log::debug!("Selecting object store for url {}", url);
+        
+        let url_str = url.as_str();
 
         #[cfg(feature = "s3")]
         {
-            if url.as_str().starts_with("s3://") {
+            if url_str.starts_with("s3://") || url_str.starts_with("s3a://") {
+                log::debug!("Selected S3 object store for url {}", url);
+
                 if let Some(bucket_name) = url.host_str() {
+                    log::debug!("Bucket is {} for url {}", bucket_name, url);
+
                     let store = Arc::new(
                         AmazonS3Builder::from_env()
                             .with_bucket_name(bucket_name)
                             .build()?,
                     );
+
+                    log::debug!("Object store for {} successfully created", url);
+
                     return Ok(store);
                 }
                 // Support Alibaba Cloud OSS
                 // Use S3 compatibility mode to access Alibaba Cloud OSS
                 // The `AWS_ENDPOINT` should have bucket name included
-            } else if url.as_str().starts_with("oss://") {
+            } else if url_str.starts_with("oss://") || url_str.starts_with("oci://") {
                 if let Some(bucket_name) = url.host_str() {
                     let store = Arc::new(
                         AmazonS3Builder::from_env()
@@ -94,7 +88,7 @@ impl KapotObjectStoreRegistry {
 
         #[cfg(feature = "azure")]
         {
-            if url.to_string().starts_with("azure://") {
+            if url_str.starts_with("azure://") || url_str.starts_with("az://") {
                 if let Some(bucket_name) = url.host_str() {
                     let store = Arc::new(
                         MicrosoftAzureBuilder::from_env()
@@ -108,8 +102,7 @@ impl KapotObjectStoreRegistry {
 
         #[cfg(feature = "gcs")]
         {
-            if url.to_string().starts_with("gs://")
-                || url.to_string().starts_with("gcs://")
+            if url_str.starts_with("gs://") || url.to_string().starts_with("gcs://")
             {
                 if let Some(bucket_name) = url.host_str() {
                     let store = Arc::new(
@@ -120,6 +113,11 @@ impl KapotObjectStoreRegistry {
                     return Ok(store);
                 }
             }
+        }
+
+        if url.to_string().starts_with("file://") {
+            let store = Arc::new(LocalFileSystem::new());
+            return Ok(store)
         }
 
         Err(DataFusionError::Execution(format!(

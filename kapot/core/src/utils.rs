@@ -20,7 +20,7 @@ use crate::error::{KapotError, Result};
 use crate::execution_plans::{
     DistributedQueryExec, ShuffleWriterExec, UnresolvedShuffleExec,
 };
-use crate::object_store_registry::{with_object_store_registry, KapotObjectStoreRegistry};
+use crate::object_store_registry::KapotObjectStoreRegistry;
 use crate::serde::scheduler::PartitionStats;
 
 use async_trait::async_trait;
@@ -34,7 +34,7 @@ use datafusion::error::DataFusionError;
 use datafusion::execution::context::{
     QueryPlanner, SessionConfig, SessionContext, SessionState,
 };
-use datafusion::execution::runtime_env::{RuntimeConfig, RuntimeEnv, RuntimeEnvBuilder};
+use datafusion::execution::runtime_env::RuntimeEnvBuilder;
 use datafusion::execution::session_state::SessionStateBuilder;
 use datafusion::logical_expr::{DdlStatement, LogicalPlan};
 use datafusion::physical_plan::aggregates::AggregateExec;
@@ -63,13 +63,16 @@ use tonic::transport::{Channel, Error, Server};
 
 /// Default session builder using the provided configuration
 pub fn default_session_builder(config: SessionConfig) -> SessionState {
+    //TODO: Adapt to Result and remove this unwrap
+    let runtime = RuntimeEnvBuilder::new()
+        .with_object_store_registry(Arc::new(KapotObjectStoreRegistry::new()))
+        .build()
+        .unwrap();
+    
     SessionStateBuilder::new()
         .with_default_features()
         .with_config(config)
-        .with_runtime_env(Arc::new(
-            RuntimeEnv::new(with_object_store_registry(RuntimeConfig::default()))
-                .unwrap(),
-        ))
+        .with_runtime_env(Arc::new(runtime))
         .build()
 }
 

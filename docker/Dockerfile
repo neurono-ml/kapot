@@ -7,16 +7,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get -y install libssl-dev openssl zlib1g zlib1g-dev libpq-dev cmake protobuf-compiler netcat curl unzip
 
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get update && \
-    apt-get install -y nodejs && \
-    npm install -g yarn
-
 # create build user with same UID as
 RUN adduser -q builder --home /home/builder && \
     mkdir -p /home/builder/workspace
 
-ENV NODE_VER=18.9.0
 ENV HOME=/home/builder
 ENV PATH=$HOME/.cargo/bin:$PATH
 
@@ -28,7 +22,6 @@ RUN rustup update && \
 WORKDIR /home/builder/workspace
 
 ADD kapot/ /home/builder/workspace/kapot/
-ADD kapot-cli/ /home/builder/workspace/kapot-cli/
 ADD examples/ /home/builder/workspace/examples/
 ADD Cargo.toml /home/builder/workspace/Cargo.toml
 
