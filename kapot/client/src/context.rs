@@ -20,6 +20,7 @@
 use datafusion::arrow::datatypes::SchemaRef;
 use datafusion::execution::context::DataFilePaths;
 use datafusion::sql::TableReference;
+use kapot_core::object_store_registry::KapotObjectStoreRegistry;
 use log::info;
 use parking_lot::Mutex;
 use sqlparser::ast::Statement;
@@ -144,6 +145,8 @@ impl KapotContext {
         config: &KapotConfig,
         concurrent_tasks: usize,
     ) -> kapot_core::error::Result<Self> {
+        use std::sync::Arc;
+
         use kapot_core::serde::KapotCodec;
         use datafusion_proto::protobuf::PhysicalPlanNode;
 
@@ -189,6 +192,8 @@ impl KapotContext {
                 config,
             )
         };
+
+        
 
         let default_codec: KapotCodec<LogicalPlanNode, PhysicalPlanNode> =
             KapotCodec::default();

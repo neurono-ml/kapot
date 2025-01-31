@@ -25,7 +25,6 @@ use std::{env, io};
 
 use anyhow::{Context, Result};
 use arrow_flight::flight_service_server::FlightServiceServer;
-use datafusion::common::runtime;
 use futures::stream::FuturesUnordered;
 use futures::StreamExt;
 use kapot_core::object_store_registry::KapotObjectStoreRegistry;

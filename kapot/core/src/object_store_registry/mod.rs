@@ -1,3 +1,4 @@
+mod constants;
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -18,11 +19,13 @@
 #[cfg(not(windows))]
 pub mod cache;
 
-use datafusion::common::DataFusionError;
+use constants::{MGC_ACCESS_KEY_DEFAULT, MGC_ACCESS_KEY_VAR, MGC_ENDPOINT_DEFAULT, MGC_ENDPOINT_VAR, MGC_REGION_DEFAULT, MGC_REGION_VAR, MGC_SECRET_KEY_DEFAULT, MGC_SECRET_KEY_VAR};
+use datafusion::common::{DataFusionError, HashMap};
 use datafusion::datasource::object_store::{
     DefaultObjectStoreRegistry, ObjectStoreRegistry,
 };
 
+use datafusion::prelude::SessionContext;
 #[cfg(feature = "s3")]
 use object_store::aws::AmazonS3Builder;
 #[cfg(feature = "azure")]
@@ -31,6 +34,7 @@ use object_store::azure::MicrosoftAzureBuilder;
 use object_store::gcp::GoogleCloudStorageBuilder;
 use object_store::local::LocalFileSystem;
 use object_store::ObjectStore;
+use std::env;
 use std::sync::Arc;
 use url::Url;
 
@@ -38,12 +42,18 @@ use url::Url;
 #[derive(Debug, Default)]
 pub struct KapotObjectStoreRegistry {
     inner: DefaultObjectStoreRegistry,
+    protocol_mappings: HashMap<String, Arc<dyn ObjectStore>>,
 }
 
 impl KapotObjectStoreRegistry {
     pub fn new() -> Self {
         Default::default()
     }
+
+    pub fn get_object_store_mappings(&self) -> &HashMap<String, Arc<dyn ObjectStore>> {
+        &self.protocol_mappings
+    }
+
 
     /// Find a suitable object store based on its url and enabled features if possible
     fn get_feature_store(&self, url: &Url) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
@@ -136,6 +146,8 @@ impl ObjectStoreRegistry for KapotObjectStoreRegistry {
     }
 
     fn get_store(&self, url: &Url) -> datafusion::error::Result<Arc<dyn ObjectStore>> {
+        log::info!("Getting object store for url {}", url);
+        
         self.inner.get_store(url).or_else(|_| {
             let store = self.get_feature_store(url)?;
             self.inner.register_store(url, store.clone());

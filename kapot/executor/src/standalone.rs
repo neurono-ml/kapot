@@ -18,6 +18,7 @@
 use crate::metrics::LoggingMetricsCollector;
 use crate::{execution_loop, executor::Executor, flight_service::KapotFlightService};
 use arrow_flight::flight_service_server::FlightServiceServer;
+use kapot_core::object_store_registry::KapotObjectStoreRegistry;
 use kapot_core::{
     error::Result,
     serde::protobuf::executor_registration::OptionalHost,
@@ -75,6 +76,7 @@ pub async fn new_standalone_executor<
 
     let runtime = RuntimeEnvBuilder::new()
         .with_temp_file_path(work_dir.clone())
+        .with_object_store_registry(Arc::new(KapotObjectStoreRegistry::new()))
         .build()?;
 
     let executor = Arc::new(Executor::new(
