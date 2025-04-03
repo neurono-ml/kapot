@@ -17,7 +17,7 @@
 
 [workspace]
 exclude = ["python"]
-members = ["kapot/kapot-cli", "kapot/client", "kapot/core", "kapot/executor", "kapot/scheduler"]
+members = ["kapot/kapot-cli", "kapot/client", "kapot/core", "kapot/executor", "kapot/scheduler", "kapot/wire-server"]
 resolver = "2"
 
 [workspace.package]

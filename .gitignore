@@ -102,3 +102,4 @@ dev/dist
 
 # logs
 logs/
+.metals/
