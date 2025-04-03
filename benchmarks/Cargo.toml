@@ -32,7 +32,6 @@ default = ["mimalloc"]
 snmalloc = ["snmalloc-rs"]
 
 [dependencies]
-ballista = { path = "../ballista/client", version = "44.0.0" }
 datafusion = { workspace = true }
 datafusion-proto = { workspace = true }
 env_logger = { workspace = true }
@@ -49,6 +48,8 @@ tokio = { version = "^1.0", features = [
     "rt-multi-thread",
     "parking_lot",
 ] }
+
+ballista = { path = "../ballista/client", version = "44.0.0" }
 
 [dev-dependencies]
 ballista-core = { path = "../ballista/core", version = "44.0.0" }
