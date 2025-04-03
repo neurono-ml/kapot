@@ -1,0 +1,11 @@
+pub mod file_store_factory;
+#[cfg(feature = "mgc")]
+pub mod magalu_mgc_factory;
+#[cfg(feature = "gcs")]
+pub mod google_gcs_factory;
+#[cfg(feature = "azure")]
+pub mod azure_factory;
+#[cfg(feature = "oss")]
+pub mod alibaba_oss_factory;
+#[cfg(feature = "s3")]
+pub mod aws_s3_factory;

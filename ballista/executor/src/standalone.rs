@@ -20,6 +20,7 @@ use crate::{execution_loop, executor::Executor, flight_service::BallistaFlightSe
 use arrow_flight::flight_service_server::FlightServiceServer;
 use ballista_core::config::BallistaConfig;
 use ballista_core::extension::SessionConfigExt;
+use ballista_core::object_store::dynamic_store_registry::DynamicObjectStoreRegistry;
 use ballista_core::registry::BallistaFunctionRegistry;
 use ballista_core::utils::default_config_producer;
 use ballista_core::{
@@ -31,6 +32,8 @@ use ballista_core::{
     BALLISTA_VERSION,
 };
 use ballista_core::{ConfigProducer, RuntimeProducer};
+use datafusion::common::runtime;
+use datafusion::execution::runtime_env::RuntimeEnvBuilder;
 use datafusion::execution::{SessionState, SessionStateBuilder};
 use log::info;
 use std::sync::Arc;
@@ -78,6 +81,38 @@ pub async fn new_standalone_executor_from_state(
     )
     .await
 }
+
+
+/// Creates standalone executor with most values
+/// set as default.
+pub async fn new_standalone_executor(
+    scheduler: SchedulerGrpcClient<Channel>,
+    concurrent_tasks: usize,
+    codec: BallistaCodec,
+) -> Result<()> {
+    let object_store_registry = DynamicObjectStoreRegistry::new();
+    let runtime_env = RuntimeEnvBuilder::new()
+        .with_object_store_registry(Arc::new(object_store_registry))
+        .build()?;
+
+    let session_state = SessionStateBuilder::new()
+        .with_runtime_env(Arc::new(runtime_env))
+        .build();
+    
+    let runtime = session_state.runtime_env().clone();
+    let runtime_producer: RuntimeProducer = Arc::new(move |_| Ok(runtime.clone()));
+
+    new_standalone_executor_from_builder(
+        scheduler,
+        concurrent_tasks,
+        Arc::new(default_config_producer),
+        runtime_producer,
+        codec,
+        (&session_state).into(),
+    )
+    .await
+}
+
 
 pub async fn new_standalone_executor_from_builder(
     scheduler: SchedulerGrpcClient<Channel>,
@@ -146,26 +181,4 @@ pub async fn new_standalone_executor_from_builder(
 
     tokio::spawn(execution_loop::poll_loop(scheduler, executor, codec));
     Ok(())
-}
-
-/// Creates standalone executor with most values
-/// set as default.
-pub async fn new_standalone_executor(
-    scheduler: SchedulerGrpcClient<Channel>,
-    concurrent_tasks: usize,
-    codec: BallistaCodec,
-) -> Result<()> {
-    let session_state = SessionStateBuilder::new().with_default_features().build();
-    let runtime = session_state.runtime_env().clone();
-    let runtime_producer: RuntimeProducer = Arc::new(move |_| Ok(runtime.clone()));
-
-    new_standalone_executor_from_builder(
-        scheduler,
-        concurrent_tasks,
-        Arc::new(default_config_producer),
-        runtime_producer,
-        codec,
-        (&session_state).into(),
-    )
-    .await
 }

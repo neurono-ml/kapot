@@ -38,6 +38,7 @@ pub mod planner;
 pub mod registry;
 pub mod serde;
 pub mod utils;
+pub mod object_store;
 
 ///
 /// [RuntimeProducer] is a factory which creates runtime [RuntimeEnv]

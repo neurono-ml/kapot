@@ -23,6 +23,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant, UNIX_EPOCH};
 
 use arrow_flight::flight_service_server::FlightServiceServer;
+use ballista_core::object_store::dynamic_store_registry::DynamicObjectStoreRegistry;
 use ballista_core::registry::BallistaFunctionRegistry;
 use datafusion_proto::logical_plan::LogicalExtensionCodec;
 use datafusion_proto::physical_plan::PhysicalExtensionCodec;
@@ -209,7 +210,10 @@ pub async fn start_executor_process(
     let runtime_producer: RuntimeProducer =
         opt.override_runtime_producer.clone().unwrap_or_else(|| {
             Arc::new(move |_| {
+                let dynamic_object_store_registry =
+                    Arc::new(DynamicObjectStoreRegistry::new());
                 let runtime_env = RuntimeEnvBuilder::new()
+                    .with_object_store_registry(dynamic_object_store_registry)
                     .with_temp_file_path(wd.clone())
                     .build()?;
                 Ok(Arc::new(runtime_env))

@@ -17,6 +17,7 @@
 
 use crate::error::{BallistaError, Result};
 use crate::extension::SessionConfigExt;
+use crate::object_store::dynamic_store_registry::DynamicObjectStoreRegistry;
 use crate::serde::scheduler::PartitionStats;
 
 use datafusion::arrow::ipc::writer::IpcWriteOptions;
@@ -40,11 +41,20 @@ use tonic::transport::{Channel, Error, Server};
 pub fn default_session_builder(
     config: SessionConfig,
 ) -> datafusion::common::Result<SessionState> {
-    Ok(SessionStateBuilder::new()
+    let dynamic_object_store_registry = Arc::new(DynamicObjectStoreRegistry::new());
+    let runtime_env = RuntimeEnvBuilder::new()
+        .with_object_store_registry(dynamic_object_store_registry)
+        .build()?;
+    let session_state_builder = SessionStateBuilder::new()
         .with_default_features()
         .with_config(config)
-        .with_runtime_env(Arc::new(RuntimeEnvBuilder::new().build()?))
-        .build())
+        .with_runtime_env(Arc::new(runtime_env));
+
+    let session_state = 
+        session_state_builder
+            .build();
+    
+    Ok(session_state)
 }
 
 pub fn default_config_producer() -> SessionConfig {
