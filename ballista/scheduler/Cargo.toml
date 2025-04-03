@@ -36,11 +36,18 @@ required-features = ["build-binary"]
 
 [features]
 build-binary = ["configure_me", "clap", "tracing-subscriber", "tracing-appender", "tracing", "ballista-core/build-binary"]
-default = ["build-binary"]
+default = ["build-binary", "object-stores"]
 flight-sql = ["base64"]
 keda-scaler = []
 prometheus-metrics = ["prometheus", "once_cell"]
 rest-api = ["graphviz-rust"]
+
+object-stores = ["azure", "gcs", "s3", "mgc", "oss"]
+azure = ["ballista-core/azure"]
+s3 = ["ballista-core/s3"]
+oss = ["ballista-core/oss"]
+gcs = ["ballista-core/gcs"]
+mgc = ["ballista-core/mgc"]
 
 [dependencies]
 arrow-flight = { workspace = true }

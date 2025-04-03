@@ -50,3 +50,10 @@ tonic = { workspace = true }
 [features]
 default = ["standalone"]
 standalone = ["ballista-executor", "ballista-scheduler"]
+
+object-stores = ["azure", "gcs", "s3", "mgc", "oss"]
+azure = ["ballista-executor/azure", "ballista-scheduler/azure"]
+s3 = ["ballista-executor/s3", "ballista-scheduler/s3"]
+oss = ["ballista-executor/oss", "ballista-scheduler/oss"]
+gcs = ["ballista-executor/gcs", "ballista-scheduler/gcs"]
+mgc = ["ballista-executor/mgc", "ballista-scheduler/mgc"]

@@ -1,4 +1,4 @@
-FROM docker.io/rust:1.81-bullseye as builder
+FROM docker.io/rust:1.85-bullseye as builder
 
 ENV RUST_LOG=info
 ENV RUST_BACKTRACE=full
@@ -21,20 +21,20 @@ RUN rustup update && \
 
 WORKDIR /home/builder/workspace
 
-ADD kapot/ /home/builder/workspace/kapot/
+ADD ballista/ /home/builder/workspace/ballista/
 ADD examples/ /home/builder/workspace/examples/
 ADD Cargo.toml /home/builder/workspace/Cargo.toml
 
 RUN cargo build --release
 RUN mkdir -p /home/builder/built/bin/ && \
-    cp /home/builder/workspace/target/release/kapot-cli /home/builder/built/bin/ && \
-    cp /home/builder/workspace/target/release/kapot-scheduler /home/builder/built/bin/ && \
-    cp /home/builder/workspace/target/release/kapot-executor /home/builder/built/bin/ && \
+    cp /home/builder/workspace/target/release/ballista-cli /home/builder/built/bin/ && \
+    cp /home/builder/workspace/target/release/ballista-scheduler /home/builder/built/bin/ && \
+    cp /home/builder/workspace/target/release/ballista-executor /home/builder/built/bin/ && \
     chmod 777 -R /home/builder/
 
 FROM docker.io/ubuntu:24.04
 
-LABEL org.opencontainers.image.source="https://github.com/andreclaudino/datafusion-kapot"
+LABEL org.opencontainers.image.source="https://github.com/andreclaudino/datafusion-ballista"
 LABEL org.opencontainers.image.description="Kapôt: Distributed SQL Query Engine, built on Apache Arrow"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 

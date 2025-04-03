@@ -36,7 +36,14 @@ required-features = ["build-binary"]
 
 [features]
 build-binary = ["configure_me", "tracing-subscriber", "tracing-appender", "tracing", "ballista-core/build-binary"]
-default = ["build-binary", "mimalloc"]
+default = ["build-binary", "mimalloc", "object-stores"]
+
+object-stores = ["azure", "gcs", "s3", "mgc", "oss"]
+azure = ["ballista-core/azure"]
+s3 = ["ballista-core/s3"]
+oss = ["ballista-core/oss"]
+gcs = ["ballista-core/gcs"]
+mgc = ["ballista-core/mgc"]
 
 [dependencies]
 arrow = { workspace = true }

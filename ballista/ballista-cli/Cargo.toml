@@ -28,7 +28,7 @@ repository = "https://github.com/apache/arrow-ballista"
 readme = "README.md"
 
 [dependencies]
-ballista = { path = "../ballista/client", version = "44.0.0", features = ["standalone"] }
+ballista = { path = "../client", version = "44.0.0", features = ["standalone"] }
 clap = { workspace = true, features = ["derive", "cargo"] }
 datafusion = { workspace = true }
 datafusion-cli = { workspace = true }
@@ -39,4 +39,11 @@ rustyline = "14.0.0"
 tokio = { workspace = true, features = ["macros", "rt", "rt-multi-thread", "sync", "parking_lot"] }
 
 [features]
+object-stores = ["azure", "gcs", "s3", "mgc", "oss"]
+azure = ["ballista/azure"]
+s3 = ["ballista/s3"]
+oss = ["ballista/oss"]
+gcs = ["ballista/gcs"]
+mgc = ["ballista/mgc"]
 
+default = ["object-stores"]

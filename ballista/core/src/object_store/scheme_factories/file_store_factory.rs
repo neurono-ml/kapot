@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use object_store::{aws::AmazonS3Builder, local::LocalFileSystem, ObjectStore};
+use object_store::{local::LocalFileSystem, ObjectStore};
 use url::Url;
 
 pub const FILE_PROTOCOL: &str = "file";

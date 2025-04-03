@@ -32,7 +32,6 @@ use ballista_core::{
     BALLISTA_VERSION,
 };
 use ballista_core::{ConfigProducer, RuntimeProducer};
-use datafusion::common::runtime;
 use datafusion::execution::runtime_env::RuntimeEnvBuilder;
 use datafusion::execution::{SessionState, SessionStateBuilder};
 use log::info;
@@ -132,7 +131,7 @@ pub async fn new_standalone_executor_from_builder(
 
     let executor_meta = ExecutorRegistration {
         id: Uuid::new_v4().to_string(), // assign this executor a unique ID
-        host: Some("localhost".to_string()),
+        host: Some("0.0.0.0".to_string()),
         port: address.port() as u32,
         // TODO Make it configurable
         grpc_port: 50020,
