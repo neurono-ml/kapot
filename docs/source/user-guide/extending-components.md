@@ -17,9 +17,9 @@
   under the License.
 -->
 
-# Extending Ballista Scheduler And Executors
+# Extending kapot Scheduler And Executors
 
-Ballista scheduler and executor provide a set of configuration options
+kapot scheduler and executor provide a set of configuration options
 which can be used to extend their basic functionality. They allow registering
 new configuration extensions, object stores, logical and physical codecs ...
 
@@ -30,9 +30,9 @@ new configuration extensions, object stores, logical and physical codecs ...
 - `logical codec` - overrides `LogicalCodec`
 - `physical codec` - overrides `PhysicalCodec`
 
-Ballista executor can be configured using `ExecutorProcessConfig` which supports overriding `function registry`,`runtime producer`, `config producer`, `logical codec`, `physical codec`.
+kapot executor can be configured using `ExecutorProcessConfig` which supports overriding `function registry`,`runtime producer`, `config producer`, `logical codec`, `physical codec`.
 
-Ballista scheduler can be tunned using `SchedulerConfig` which supports overriding `config producer`, `session builder`, `logical codec`, `physical codec`
+kapot scheduler can be tunned using `SchedulerConfig` which supports overriding `config producer`, `session builder`, `logical codec`, `physical codec`
 
 ## Example: Custom Object Store Integration
 
@@ -47,7 +47,7 @@ For this specific task `config producer`, `runtime producer` and `session builde
 /// which is used to configure [ObjectStore] with ACCESS and
 /// SECRET key
 pub fn custom_session_config_with_s3_options() -> SessionConfig {
-    SessionConfig::new_with_ballista()
+    SessionConfig::new_with_kapot()
         .with_information_schema(true)
         .with_option_extension(S3Options::default())
 }
@@ -102,9 +102,9 @@ pub fn custom_session_state_with_s3_support(
 ```rust
 #[tokio::main]
 async fn main() -> Result<()> {
-  // parse CLI options (default options which Ballista scheduler exposes)
+  // parse CLI options (default options which kapot scheduler exposes)
   let (opt, _remaining_args) =
-      Config::including_optional_config_files(&["/etc/ballista/scheduler.toml"])
+      Config::including_optional_config_files(&["/etc/kapot/scheduler.toml"])
           .unwrap_or_exit();
 
   let addr = format!("{}:{}", opt.bind_host, opt.bind_port);
@@ -123,7 +123,7 @@ async fn main() -> Result<()> {
   config.override_session_builder = Some(Arc::new(|session_config: SessionConfig| {
       custom_session_state_with_s3_support(session_config)
   }));
-  let cluster = BallistaCluster::new_from_config(&config).await?;
+  let cluster = kapotCluster::new_from_config(&config).await?;
   start_server(cluster, addr, Arc::new(config)).await?;
   Ok(())
 }
@@ -134,9 +134,9 @@ async fn main() -> Result<()> {
 ```rust
 #[tokio::main]
 async fn main() -> Result<()> {
-  // parse CLI options (default options which Ballista executor exposes)
+  // parse CLI options (default options which kapot executor exposes)
   let (opt, _remaining_args) =
-      Config::including_optional_config_files(&["/etc/ballista/executor.toml"])
+      Config::including_optional_config_files(&["/etc/kapot/executor.toml"])
           .unwrap_or_exit();
 
   // Converting CLI options to executor configuration
@@ -163,7 +163,7 @@ async fn main() -> Result<()> {
 ### Configuring Client
 
 ```rust
-let test_data = ballista_examples::test_util::examples_test_data();
+let test_data = kapot_examples::test_util::examples_test_data();
 
 // new sessions state with required custom session configuration and runtime environment
 let state =
@@ -233,13 +233,13 @@ assert_batches_eq!(expected, &result);
 
 ## Example: Client Side Logical/Physical Codec
 
-Default physical and logical codecs can be replaced if needed. For scheduler and executor procedure is similar to previous example. At the client side procedure is slightly different, `ballista::prelude::SessionConfigExt` provides methods to be used to override physical and logical codecs on client side.
+Default physical and logical codecs can be replaced if needed. For scheduler and executor procedure is similar to previous example. At the client side procedure is slightly different, `kapot::prelude::SessionConfigExt` provides methods to be used to override physical and logical codecs on client side.
 
 ```rust
-let session_config = SessionConfig::new_with_ballista()
+let session_config = SessionConfig::new_with_kapot()
     .with_information_schema(true)
-    .with_ballista_physical_extension_codec(Arc::new(BetterPhysicalCodec::default()))
-    .with_ballista_logical_extension_codec(Arc::new(BetterLogicalCodec::default()));
+    .with_kapot_physical_extension_codec(Arc::new(BetterPhysicalCodec::default()))
+    .with_kapot_logical_extension_codec(Arc::new(BetterLogicalCodec::default()));
 
 let state = SessionStateBuilder::new()
     .with_default_features()

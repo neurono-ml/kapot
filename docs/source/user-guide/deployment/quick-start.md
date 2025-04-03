@@ -17,7 +17,7 @@
   under the License.
 -->
 
-# Ballista Quickstart
+# kapot Quickstart
 
 A simple way to start a local cluster for testing purposes is to use cargo to build the project and then run the scheduler and executor binaries directly.
 
@@ -34,19 +34,19 @@ From the root of the project, build release binaries.
 cargo build --release
 ```
 
-Start a Ballista scheduler process in a new terminal session.
+Start a kapot scheduler process in a new terminal session.
 
 ```shell
-RUST_LOG=info ./target/release/ballista-scheduler
+RUST_LOG=info ./target/release/kapot-scheduler
 ```
 
-Start one or more Ballista executor processes in new terminal sessions. When starting more than one
+Start one or more kapot executor processes in new terminal sessions. When starting more than one
 executor, a unique port number must be specified for each executor.
 
 ```shell
-RUST_LOG=info ./target/release/ballista-executor -c 2 -p 50051
+RUST_LOG=info ./target/release/kapot-executor -c 2 -p 50051
 
-RUST_LOG=info ./target/release/ballista-executor -c 2 -p 50052
+RUST_LOG=info ./target/release/kapot-executor -c 2 -p 50052
 ```
 
 ## Running the examples
@@ -63,8 +63,8 @@ cargo run --release --example remote-sql
 #### Source code for distributed SQL example
 
 ```rust
-use ballista::prelude::*;
-use ballista_examples::test_util;
+use kapot::prelude::*;
+use kapot_examples::test_util;
 use datafusion::{
     execution::SessionStateBuilder,
     prelude::{CsvReadOptions, SessionConfig, SessionContext},
@@ -74,9 +74,9 @@ use datafusion::{
 /// fetching results, using SQL
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = SessionConfig::new_with_ballista()
+    let config = SessionConfig::new_with_kapot()
         .with_target_partitions(4)
-        .with_ballista_job_name("Remote SQL Example");
+        .with_kapot_job_name("Remote SQL Example");
 
     let state = SessionStateBuilder::new()
         .with_config(config)
@@ -119,8 +119,8 @@ cargo run --release --example remote-dataframe
 #### Source code for distributed DataFrame example
 
 ```rust
-use ballista::prelude::*;
-use ballista_examples::test_util;
+use kapot::prelude::*;
+use kapot_examples::test_util;
 use datafusion::{
     prelude::{col, lit, ParquetReadOptions, SessionContext},
 };

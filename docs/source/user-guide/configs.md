@@ -19,18 +19,18 @@
 
 # Configuration
 
-## Ballista Configuration Settings
+## kapot Configuration Settings
 
-Configuring Ballista is quite similar to configuring DataFusion. Most settings are identical, with only a few configurations specific to Ballista.
+Configuring kapot is quite similar to configuring DataFusion. Most settings are identical, with only a few configurations specific to kapot.
 
 _Example: Specifying configuration options when creating a context_
 
 ```rust
-use ballista::extension::{SessionConfigExt, SessionContextExt};
+use kapot::extension::{SessionConfigExt, SessionContextExt};
 
-let session_config = SessionConfig::new_with_ballista()
+let session_config = SessionConfig::new_with_kapot()
     .with_information_schema(true)
-    .with_ballista_job_name("Super Cool Ballista App");
+    .with_kapot_job_name("Super Cool kapot App");
 
 let state = SessionStateBuilder::new()
     .with_default_features()
@@ -40,33 +40,33 @@ let state = SessionStateBuilder::new()
 let ctx: SessionContext = SessionContext::remote_with_state(&url,state).await?;
 ```
 
-`SessionConfig::new_with_ballista()` will setup `SessionConfig` for use with ballista. This is not required, `SessionConfig::new` could be used, but it's advised as it will set up some sensible configuration defaults .
+`SessionConfig::new_with_kapot()` will setup `SessionConfig` for use with kapot. This is not required, `SessionConfig::new` could be used, but it's advised as it will set up some sensible configuration defaults .
 
-`SessionConfigExt` expose set of `SessionConfigExt::with_ballista_` and `SessionConfigExt::ballista_` methods which can tune retrieve ballista specific options.
+`SessionConfigExt` expose set of `SessionConfigExt::with_kapot_` and `SessionConfigExt::kapot_` methods which can tune retrieve kapot specific options.
 
 Notable `SessionConfigExt` configuration methods would be:
 
 ```rust
-/// Overrides ballista's [LogicalExtensionCodec]
-fn with_ballista_logical_extension_codec(
+/// Overrides kapot's [LogicalExtensionCodec]
+fn with_kapot_logical_extension_codec(
     self,
     codec: Arc<dyn LogicalExtensionCodec>,
 ) -> SessionConfig;
 
-/// Overrides ballista's [PhysicalExtensionCodec]
-fn with_ballista_physical_extension_codec(
+/// Overrides kapot's [PhysicalExtensionCodec]
+fn with_kapot_physical_extension_codec(
     self,
     codec: Arc<dyn PhysicalExtensionCodec>,
 ) -> SessionConfig;
 
-/// Overrides ballista's [QueryPlanner]
-fn with_ballista_query_planner(
+/// Overrides kapot's [QueryPlanner]
+fn with_kapot_query_planner(
     self,
     planner: Arc<dyn QueryPlanner + Send + Sync + 'static>,
 ) -> SessionConfig;
 ```
 
-which could be used to change default ballista behavior.
+which could be used to change default kapot behavior.
 
 If information schema is enabled all configuration parameters could be retrieved or set using SQL;
 
@@ -74,7 +74,7 @@ If information schema is enabled all configuration parameters could be retrieved
 let ctx: SessionContext = SessionContext::remote_with_state(&url, state).await?;
 
 let result = ctx
-    .sql("select name, value from information_schema.df_settings where name like 'ballista'")
+    .sql("select name, value from information_schema.df_settings where name like 'kapot'")
     .await?
     .collect()
     .await?;
@@ -83,20 +83,20 @@ let expected = [
     "+-------------------+-------------------------+",
     "| name              | value                   |",
     "+-------------------+-------------------------+",
-    "| ballista.job.name | Super Cool Ballista App |",
+    "| kapot.job.name | Super Cool kapot App |",
     "+-------------------+-------------------------+",
 ];
 ```
 
-## Ballista Scheduler Configuration Settings
+## kapot Scheduler Configuration Settings
 
-Besides the BallistaContext configuration settings, a few configuration settings for the Ballista scheduler to better
+Besides the kapotContext configuration settings, a few configuration settings for the kapot scheduler to better
 manage the whole cluster are also needed to be taken care of.
 
 _Example: Specifying configuration options when starting the scheduler_
 
 ```shell
-./ballista-scheduler --scheduler-policy push-staged --event-loop-buffer-size 1000000 --executor-slots-policy
+./kapot-scheduler --scheduler-policy push-staged --event-loop-buffer-size 1000000 --executor-slots-policy
 round-robin-local
 ```
 

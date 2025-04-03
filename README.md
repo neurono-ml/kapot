@@ -17,16 +17,16 @@
   under the License.
 -->
 
-# Ballista: Making DataFusion Applications Distributed
+# kapot: Making DataFusion Applications Distributed
 
 [![Apache licensed][license-badge]][license-url]
 
 [license-badge]: https://img.shields.io/badge/license-Apache%20v2-blue.svg
 [license-url]: https://github.com/apache/datafusion-comet/blob/main/LICENSE.txt
 
-<img src="docs/source/_static/images/ballista-logo.png" width="512" alt="logo"/>
+<img src="docs/source/_static/images/kapot-logo.png" width="512" alt="logo"/>
 
-Ballista is a distributed query execution engine that enhances [Apache DataFusion](https://github.com/apache/datafusion) by enabling the parallelized execution of workloads across multiple nodes in a distributed environment.
+kapot is a distributed query execution engine that enhances [Apache DataFusion](https://github.com/apache/datafusion) by enabling the parallelized execution of workloads across multiple nodes in a distributed environment.
 
 Existing DataFusion application:
 
@@ -52,17 +52,17 @@ async fn main() -> datafusion::error::Result<()> {
 can be distributed with few lines of code changed:
 
 > [!IMPORTANT]  
-> There is a gap between DataFusion and Ballista, which may bring incompatibilities. The community is actively working to close the gap
+> There is a gap between DataFusion and kapot, which may bring incompatibilities. The community is actively working to close the gap
 
 ```rust
-use ballista::prelude::*;
+use kapot::prelude::*;
 use datafusion::prelude::*;
 
 #[tokio::main]
 async fn main() -> datafusion::error::Result<()> {
-    // create SessionContext with ballista support
+    // create SessionContext with kapot support
     // standalone context will start all required
-    // ballista infrastructure in the background as well
+    // kapot infrastructure in the background as well
     let ctx = SessionContext::standalone().await?;
 
     // everything else remains the same
@@ -82,25 +82,25 @@ async fn main() -> datafusion::error::Result<()> {
 }
 ```
 
-For documentation or more examples, please refer to the [Ballista User Guide][user-guide].
+For documentation or more examples, please refer to the [kapot User Guide][user-guide].
 
 ## Architecture
 
-A Ballista cluster consists of one or more scheduler processes and one or more executor processes. These processes
+A kapot cluster consists of one or more scheduler processes and one or more executor processes. These processes
 can be run as native binaries and are also available as Docker Images, which can be easily deployed with
-[Docker Compose](https://datafusion.apache.org/ballista/user-guide/deployment/docker-compose.html) or
-[Kubernetes](https://datafusion.apache.org/ballista/user-guide/deployment/kubernetes.html).
+[Docker Compose](https://datafusion.apache.org/kapot/user-guide/deployment/docker-compose.html) or
+[Kubernetes](https://datafusion.apache.org/kapot/user-guide/deployment/kubernetes.html).
 
 The following diagram shows the interaction between clients and the scheduler for submitting jobs, and the interaction
 between the executor(s) and the scheduler for fetching tasks and reporting task status.
 
-![Ballista Cluster Diagram](docs/source/contributors-guide/ballista_architecture.excalidraw.svg)
+![kapot Cluster Diagram](docs/source/contributors-guide/kapot_architecture.excalidraw.svg)
 
 See the [architecture guide](docs/source/contributors-guide/architecture.md) for more details.
 
 ## Performance
 
-We run some simple benchmarks comparing Ballista with Apache Spark to track progress with performance optimizations.
+We run some simple benchmarks comparing kapot with Apache Spark to track progress with performance optimizations.
 These are benchmarks derived from TPC-H and not official TPC-H benchmarks. These results are from running individual
 queries at scale factor 100 (100 GB) on a single node with a single executor and 8 concurrent tasks.
 
@@ -125,18 +125,18 @@ The overall speedup is 2.9x
 # Getting Started
 
 The easiest way to get started is to run one of the standalone or distributed [examples](./examples/README.md). After
-that, refer to the [Getting Started Guide](ballista/client/README.md).
+that, refer to the [Getting Started Guide](kapot/client/README.md).
 
 ## Project Status
 
-Ballista supports a wide range of SQL, including CTEs, Joins, and subqueries and can execute complex queries at scale,
-but still there is a gap between DataFusion and Ballista which we want to bridge in near future.
+kapot supports a wide range of SQL, including CTEs, Joins, and subqueries and can execute complex queries at scale,
+but still there is a gap between DataFusion and kapot which we want to bridge in near future.
 
 Refer to the [DataFusion SQL Reference](https://datafusion.apache.org/user-guide/sql/index.html) for more
 information on supported SQL.
 
 ## Contribution Guide
 
-Please see the [Contribution Guide](CONTRIBUTING.md) for information about contributing to Ballista.
+Please see the [Contribution Guide](CONTRIBUTING.md) for information about contributing to kapot.
 
-[user-guide]: https://datafusion.apache.org/ballista/
+[user-guide]: https://datafusion.apache.org/kapot/

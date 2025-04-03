@@ -17,13 +17,13 @@
   under the License.
 -->
 
-# Ballista Scheduler Metrics
+# kapot Scheduler Metrics
 
 ## Prometheus
 
 > This is optional scheduler feature which should be enabled with `prometheus-metrics` feature
 
-Built with default features, the ballista scheduler will automatically collect and expose a standard set of prometheus metrics.
+Built with default features, the kapot scheduler will automatically collect and expose a standard set of prometheus metrics.
 The metrics currently collected automatically include:
 
 - _job_exec_time_seconds_ - Histogram of successful job execution time in seconds

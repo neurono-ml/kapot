@@ -42,7 +42,7 @@ Although some tasks can only be performed by a PMC member, many tasks can be per
 | Task                                                             | Role Required |
 | ---------------------------------------------------------------- | ------------- |
 | Create PRs against main branch to update DataFusion dependencies | None          |
-| Create PRs against main branch to update Ballista version        | None          |
+| Create PRs against main branch to update kapot version        | None          |
 | Create release branch (e.g. branch-0.11)                         | Committer     |
 | Create PRs against release branch with CHANGELOG                 | None          |
 | Create PRs against release branch with cherry-picked commits     | None          |
@@ -71,7 +71,7 @@ Although some tasks can only be performed by a PMC member, many tasks can be per
 - You will need a GitHub Personal Access Token with "repo" access. Follow
   [these instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
   to generate one if you do not already have one.
-- Have upstream git repo `git@github.com:apache/datafusion-ballista.git` add as git remote `apache`.
+- Have upstream git repo `git@github.com:apache/datafusion-kapot.git` add as git remote `apache`.
 
 ### Preparing the `main` Branch
 
@@ -79,7 +79,7 @@ Before creating a new release:
 
 - We need to ensure that the main branch does not have any GitHub dependencies
 - a PR should be created and merged to update the major version number of the project. There is a script to automate
-  updating the version number: `./dev/update_ballista_versions.py 0.11.0`
+  updating the version number: `./dev/update_kapot_versions.py 0.11.0`
 - A new release branch should be created, such as `branch-0.11`
 
 Once the release branch has been created, the `main` branch can immediately go back to depending on DataFusion with a
@@ -102,7 +102,7 @@ pip3 install PyGitHub
 Run the following command to generate the changelog content.
 
 ```bash
-$ GITHUB_TOKEN=<TOKEN> ./dev/release/generate-changelog.py apache/datafusion-ballista 0.11.0 HEAD > 0.12.0.md
+$ GITHUB_TOKEN=<TOKEN> ./dev/release/generate-changelog.py apache/datafusion-kapot 0.11.0 HEAD > 0.12.0.md
 ```
 
 This script creates a changelog from GitHub PRs based on the labels associated with them as well as looking for
@@ -121,9 +121,9 @@ This process is not fully automated, so there are some additional manual steps:
 - Add the following content (copy from the previous version's changelog and update as appropriate:
 
 ```
-## [0.12.0](https://github.com/apache/datafusion-ballista/tree/0.12.0) (2024-01-14)
+## [0.12.0](https://github.com/apache/datafusion-kapot/tree/0.12.0) (2024-01-14)
 
-[Full Changelog](https://github.com/apache/datafusion-ballista/compare/0.11.0...0.12.0)
+[Full Changelog](https://github.com/apache/datafusion-kapot/compare/0.11.0...0.12.0)
 ```
 
 Send a PR to get these changes merged into the release branch (e.g. `branch-0.12`). If new commits that could change the
@@ -220,7 +220,7 @@ NOTE: steps in this section can only be done by PMC members.
 ### After the release is approved
 
 Move artifacts to the release location in SVN, e.g.
-https://dist.apache.org/repos/dist/release/datafusion/datafusion-ballista-0.8.0/, using
+https://dist.apache.org/repos/dist/release/datafusion/datafusion-kapot-0.8.0/, using
 the `release-tarball.sh` script:
 
 ```shell
@@ -253,11 +253,11 @@ instructions](https://doc.rust-lang.org/cargo/reference/publishing.html) to
 create an account and login to crates.io before asking to be added as an owner
 of the following crates:
 
-- [ballista](https://crates.io/crates/ballista)
-- [ballista-cli](https://crates.io/crates/ballista-cli)
-- [ballista-core](https://crates.io/crates/ballista-core)
-- [ballista-executor](https://crates.io/crates/ballista-executor)
-- [ballista-scheduler](https://crates.io/crates/ballista-scheduler)
+- [kapot](https://crates.io/crates/kapot)
+- [kapot-cli](https://crates.io/crates/kapot-cli)
+- [kapot-core](https://crates.io/crates/kapot-core)
+- [kapot-executor](https://crates.io/crates/kapot-executor)
+- [kapot-scheduler](https://crates.io/crates/kapot-scheduler)
 
 Download and unpack the official release tarball
 
@@ -274,18 +274,18 @@ dot -Tsvg dev/release/crate-deps.dot > dev/release/crate-deps.svg
 ```
 
 ```shell
-(cd ballista/core && cargo publish)
-(cd ballista/executor && cargo publish)
-(cd ballista/scheduler && cargo publish)
-(cd ballista/client && cargo publish)
-(cd ballista-cli && cargo publish)
+(cd kapot/core && cargo publish)
+(cd kapot/executor && cargo publish)
+(cd kapot/scheduler && cargo publish)
+(cd kapot/client && cargo publish)
+(cd kapot-cli && cargo publish)
 ```
 
 ### Publish Docker Images
 
 Pushing a release tag causes Docker images to be published.
 
-Images can be found at [https://github.com/apache/datafusion-ballista/pkgs/container/datafusion-ballista-standalone](https://github.com/apache/datafusion-ballista/pkgs/container/datafusion-ballista-standalone)
+Images can be found at [https://github.com/apache/datafusion-kapot/pkgs/container/datafusion-kapot-standalone](https://github.com/apache/datafusion-kapot/pkgs/container/datafusion-kapot-standalone)
 
 ### Call the vote
 
@@ -302,8 +302,8 @@ with the release verification.
 
 ### Add the release to Apache Reporter
 
-Add the release to https://reporter.apache.org/addrelease.html?datafusion with a version name prefixed with `BALLISTA-`,
-for example `BALLISTA-0.9.0`.
+Add the release to https://reporter.apache.org/addrelease.html?datafusion with a version name prefixed with `kapot-`,
+for example `kapot-0.9.0`.
 
 The release information is used to generate a template for a board report (see example
 [here](https://github.com/apache/arrow/pull/14357)).
@@ -317,32 +317,32 @@ for more information.
 
 Release candidates should be deleted once the release is published.
 
-Get a list of Ballista release candidates:
+Get a list of kapot release candidates:
 
 ```bash
-svn ls https://dist.apache.org/repos/dist/dev/datafusion | grep ballista
+svn ls https://dist.apache.org/repos/dist/dev/datafusion | grep kapot
 ```
 
 Delete a release candidate:
 
 ```bash
-svn delete -m "delete old Ballista RC" https://dist.apache.org/repos/dist/dev/datafusion/apache-datafusion-ballista-0.8.0-rc1/
+svn delete -m "delete old kapot RC" https://dist.apache.org/repos/dist/dev/datafusion/apache-datafusion-kapot-0.8.0-rc1/
 ```
 
 #### Deleting old releases from `release` svn
 
 Only the latest release should be available. Delete old releases after publishing the new release.
 
-Get a list of Ballista releases:
+Get a list of kapot releases:
 
 ```bash
-svn ls https://dist.apache.org/repos/dist/release/datafusion | grep ballista
+svn ls https://dist.apache.org/repos/dist/release/datafusion | grep kapot
 ```
 
 Delete a release:
 
 ```bash
-svn delete -m "delete old Ballista release" https://dist.apache.org/repos/dist/release/datafusion/datafusion-ballista-0.8.0
+svn delete -m "delete old kapot release" https://dist.apache.org/repos/dist/release/datafusion/datafusion-kapot-0.8.0
 ```
 
 ### Optional: Write a blog post announcing the release
@@ -353,8 +353,8 @@ with a copy of the previous release announcement.
 Run the following commands to get the number of commits and number of unique contributors for inclusion in the blog post.
 
 ```bash
-git log --pretty=oneline 0.11.0..0.10.0 ballista ballista-cli examples | wc -l
-git shortlog -sn 0.11.0..0.10.0 ballista ballista-cli examples | wc -l
+git log --pretty=oneline 0.11.0..0.10.0 kapot kapot-cli examples | wc -l
+git shortlog -sn 0.11.0..0.10.0 kapot kapot-cli examples | wc -l
 ```
 
 Once there is consensus on the contents of the post, create a PR to add a blog post to the

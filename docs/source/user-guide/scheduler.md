@@ -17,7 +17,7 @@
   under the License.
 -->
 
-# Ballista Scheduler
+# kapot Scheduler
 
 ## REST API
 

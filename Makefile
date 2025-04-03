@@ -8,6 +8,10 @@ release:
 	git push
 	git push --tags --force
 
+image:
+	podman build -t ghcr.io/neurono-ml/${BINARY_NAME}:${GIT_REFERENCE} .
+	podman tag ghcr.io/neurono-ml/${BINARY_NAME}:${GIT_REFERENCE} ghcr.io/neurono-ml/${BINARY_NAME}
+
 publish:
 	# cargo publish -p kapot-cache
 	cargo publish -p kapot-core

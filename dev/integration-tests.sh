@@ -24,7 +24,7 @@ pushd benchmarks
 popd
 
 echo "Building Docker images ..."
-./dev/build-ballista-docker.sh
+./dev/build-kapot-docker.sh
 
 echo "Starting docker-compose in background ..."
 docker-compose up -d
@@ -34,7 +34,7 @@ echo "Sleeping (wait for scheduler to start)..."
 sleep 10
 
 echo "Running benchmarks ..."
-docker-compose run ballista-client /root/run.sh
+docker-compose run kapot-client /root/run.sh
 
 #TODO need to call docker-compose down even if benchmarks fail
 

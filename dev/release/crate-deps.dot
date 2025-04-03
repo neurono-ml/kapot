@@ -17,20 +17,20 @@
 
 digraph G {
 
-    ballista_core
-    ballista_scheduler
-    ballista_executor
-    ballista
-    ballista_cli
+    kapot_core
+    kapot_scheduler
+    kapot_executor
+    kapot
+    kapot_cli
 
-    ballista_scheduler -> ballista_core
+    kapot_scheduler -> kapot_core
 
-    ballista_executor -> ballista_core
+    kapot_executor -> kapot_core
 
-    ballista -> ballista_core
-    ballista -> ballista_scheduler
-    ballista -> ballista_executor
+    kapot -> kapot_core
+    kapot -> kapot_scheduler
+    kapot -> kapot_executor
 
-	ballista_cli -> ballista
+	kapot_cli -> kapot
 
 }

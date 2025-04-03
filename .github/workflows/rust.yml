@@ -69,8 +69,8 @@ jobs:
         with:
           name: rust-artifacts
           path: |
-            /github/home/target/release/ballista-scheduler
-            /github/home/target/release/ballista-executor
+            /github/home/target/release/kapot-scheduler
+            /github/home/target/release/kapot-executor
 
   # test the crate
   linux-test:
@@ -122,9 +122,9 @@ jobs:
           CARGO_HOME: "/github/home/.cargo"
           CARGO_TARGET_DIR: "/github/home/target"
 
-  # run ballista tests
-  ballista-test:
-    name: Test Ballista on AMD64 Rust ${{ matrix.rust }}
+  # run kapot tests
+  kapot-test:
+    name: Test kapot on AMD64 Rust ${{ matrix.rust }}
     needs: [linux-build-lib]
     runs-on: ubuntu-latest
     strategy:
@@ -167,13 +167,13 @@ jobs:
         uses: ./.github/actions/setup-builder
         with:
           rust-version: ${{ matrix.rust }}
-      # Ballista is currently not part of the main workspace so requires a separate test step
-      - name: Run Ballista tests
+      # kapot is currently not part of the main workspace so requires a separate test step
+      - name: Run kapot tests
         run: |
           export PATH=$PATH:$HOME/d/protoc/bin
           export ARROW_TEST_DATA=$(pwd)/testing/data
           export PARQUET_TEST_DATA=$(pwd)/parquet-testing/data
-          cd ballista
+          cd kapot
           # Ensure also compiles in standalone mode
           cargo test --no-default-features --features standalone
         env:
@@ -274,7 +274,7 @@ jobs:
           rust-version: ${{ matrix.rust }}
       - name: Verify that benchmark queries return expected results
         run: |
-          cargo test --package ballista-benchmarks --profile release-nonlto --features=ci -- --test-threads=1
+          cargo test --package kapot-benchmarks --profile release-nonlto --features=ci -- --test-threads=1
 
   lint:
     name: Lint
@@ -311,14 +311,14 @@ jobs:
       - name: Build and push Docker image
         run: |
           echo "github user is $DOCKER_USER"
-          docker build -t arrow-ballista-standalone:latest -f dev/docker/ballista-standalone.Dockerfile .
+          docker build -t arrow-kapot-standalone:latest -f dev/docker/kapot-standalone.Dockerfile .
           export DOCKER_TAG="$(git describe --exact-match --tags $(git log -n1 --pretty='%h') || echo '')"
           if [[ $DOCKER_TAG =~ ^[0-9\.]+-rc[0-9]+$ ]]
           then
             echo "publishing docker tag $DOCKER_TAG"
-            docker tag arrow-ballista-standalone:latest ghcr.io/apache/arrow-ballista-standalone:$DOCKER_TAG
+            docker tag arrow-kapot-standalone:latest ghcr.io/apache/arrow-kapot-standalone:$DOCKER_TAG
             docker login ghcr.io -u $DOCKER_USER -p "$DOCKER_PASS"
-            docker push ghcr.io/apache/arrow-ballista-standalone:$DOCKER_TAG
+            docker push ghcr.io/apache/arrow-kapot-standalone:$DOCKER_TAG
           fi
         env:
           DOCKER_USER: ${{ github.actor }}

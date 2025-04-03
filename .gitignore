@@ -88,7 +88,7 @@ cpp/Brewfile.lock.json
 # Rust
 target
 # Cargo.lock
-!ballista-cli/Cargo.lock
+!kapot-cli/Cargo.lock
 
 rusty-tags.vi
 .history

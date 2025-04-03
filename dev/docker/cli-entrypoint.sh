@@ -19,4 +19,4 @@
 
 set -e
 
-/root/ballista-cli "$@"
+/root/kapot-cli "$@"

@@ -26,9 +26,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y netcat
 
-COPY target/$RELEASE_FLAG/ballista-scheduler /root/ballista-scheduler
+COPY target/$RELEASE_FLAG/kapot-scheduler /root/kapot-scheduler
 
-# Expose Ballista Scheduler gRPC port
+# Expose kapot Scheduler gRPC port
 EXPOSE 50050
 
 COPY dev/docker/scheduler-entrypoint.sh /root/scheduler-entrypoint.sh

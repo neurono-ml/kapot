@@ -21,15 +21,15 @@ set -e
 
 RELEASE_FLAG=${RELEASE_FLAG:=release}
 
-./dev/build-ballista-executables.sh
+./dev/build-kapot-executables.sh
 
 docker compose build
 
 . ./dev/build-set-env.sh
-docker build -t "apache/arrow-ballista-standalone:$BALLISTA_VERSION" -f dev/docker/ballista-standalone.Dockerfile .
+docker build -t "apache/arrow-kapot-standalone:$kapot_VERSION" -f dev/docker/kapot-standalone.Dockerfile .
 
-docker tag ballista-executor "apache/arrow-ballista-executor:$BALLISTA_VERSION"
-docker tag ballista-scheduler "apache/arrow-ballista-scheduler:$BALLISTA_VERSION"
-docker tag ballista-benchmarks "apache/arrow-ballista-benchmarks:$BALLISTA_VERSION"
+docker tag kapot-executor "apache/arrow-kapot-executor:$kapot_VERSION"
+docker tag kapot-scheduler "apache/arrow-kapot-scheduler:$kapot_VERSION"
+docker tag kapot-benchmarks "apache/arrow-kapot-benchmarks:$kapot_VERSION"
 
-docker build -t "apache/arrow-ballista-cli:$BALLISTA_VERSION" -f dev/docker/ballista-cli.Dockerfile .
+docker build -t "apache/arrow-kapot-cli:$kapot_VERSION" -f dev/docker/kapot-cli.Dockerfile .

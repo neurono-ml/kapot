@@ -17,20 +17,20 @@
   under the License.
 -->
 
-# Distributing DataFusion with Ballista
+# Distributing DataFusion with kapot
 
-To connect to a Ballista cluster from Rust, first start by creating a `SessionContext` connected to remote scheduler server.
+To connect to a kapot cluster from Rust, first start by creating a `SessionContext` connected to remote scheduler server.
 
 ```rust
-use ballista::prelude::*;
+use kapot::prelude::*;
 use datafusion::{
     execution::SessionStateBuilder,
     prelude::{SessionConfig, SessionContext},
 };
 
-let config = SessionConfig::new_with_ballista()
+let config = SessionConfig::new_with_kapot()
     .with_target_partitions(4)
-    .with_ballista_job_name("Remote SQL Example");
+    .with_kapot_job_name("Remote SQL Example");
 
 let state = SessionStateBuilder::new()
     .with_config(config)
@@ -43,14 +43,14 @@ let ctx = SessionContext::remote_with_state("df://localhost:50050", state).await
 For testing purposes, standalone, in process cluster could be started with:
 
 ```rust
-use ballista::prelude::*;
+use kapot::prelude::*;
 use datafusion::{
     execution::SessionStateBuilder,
     prelude::{SessionConfig, SessionContext},
 };
-let config = SessionConfig::new_with_ballista()
+let config = SessionConfig::new_with_kapot()
     .with_target_partitions(1)
-    .with_ballista_standalone_parallelism(2);
+    .with_kapot_standalone_parallelism(2);
 
 let state = SessionStateBuilder::new()
     .with_config(config)
@@ -66,8 +66,8 @@ Following examples require running remove scheduler and executor nodes.
 Full example using the DataFrame API.
 
 ```rust
-use ballista::prelude::*;
-use ballista_examples::test_util;
+use kapot::prelude::*;
+use kapot_examples::test_util;
 use datafusion::{
     prelude::{col, lit, ParquetReadOptions, SessionContext},
 };
@@ -97,8 +97,8 @@ async fn main() -> Result<()> {
 Here is a full example demonstrating SQL usage, with user specific `SessionConfig`:
 
 ```rust
-use ballista::prelude::*;
-use ballista_examples::test_util;
+use kapot::prelude::*;
+use kapot_examples::test_util;
 use datafusion::{
     execution::SessionStateBuilder,
     prelude::{CsvReadOptions, SessionConfig, SessionContext},
@@ -108,9 +108,9 @@ use datafusion::{
 /// fetching results, using SQL
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = SessionConfig::new_with_ballista()
+    let config = SessionConfig::new_with_kapot()
         .with_target_partitions(4)
-        .with_ballista_job_name("Remote SQL Example");
+        .with_kapot_job_name("Remote SQL Example");
 
     let state = SessionStateBuilder::new()
         .with_config(config)

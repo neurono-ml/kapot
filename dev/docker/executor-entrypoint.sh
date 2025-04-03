@@ -19,4 +19,4 @@
 
 set -e
 
-/root/ballista-executor "$@"
+/root/kapot-executor "$@"

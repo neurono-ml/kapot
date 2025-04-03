@@ -23,7 +23,7 @@ ENV RELEASE_FLAG=${RELEASE_FLAG}
 ENV RUST_LOG=info
 ENV RUST_BACKTRACE=full
 
-COPY target/$RELEASE_FLAG/ballista-cli /root/ballista-cli
+COPY target/$RELEASE_FLAG/kapot-cli /root/kapot-cli
 
 COPY dev/docker/cli-entrypoint.sh /root/cli-entrypoint.sh
 ENTRYPOINT ["/root/cli-entrypoint.sh"]

@@ -24,7 +24,7 @@ on:
       - .github/workflows/docs.yaml
       - docs/**
 
-name: Deploy DataFusion Ballista site
+name: Deploy DataFusion kapot site
 
 jobs:
   build-docs:

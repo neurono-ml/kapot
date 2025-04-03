@@ -17,8 +17,8 @@
 
 FROM ubuntu:22.04
 
-LABEL org.opencontainers.image.source="https://github.com/apache/arrow-ballista"
-LABEL org.opencontainers.image.description="Apache Arrow Ballista Distributed SQL Query Engine"
+LABEL org.opencontainers.image.source="https://github.com/apache/arrow-kapot"
+LABEL org.opencontainers.image.description="Apache Arrow kapot Distributed SQL Query Engine"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 ARG RELEASE_FLAG=release
@@ -30,11 +30,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get -qq update && apt-get install -qq -y netcat wget
 
-COPY target/$RELEASE_FLAG/ballista-scheduler /root/ballista-scheduler
-COPY target/$RELEASE_FLAG/ballista-executor /root/ballista-executor
+COPY target/$RELEASE_FLAG/kapot-scheduler /root/kapot-scheduler
+COPY target/$RELEASE_FLAG/kapot-executor /root/kapot-executor
 
-RUN chmod a+x /root/ballista-scheduler && \
-    chmod a+x /root/ballista-executor
+RUN chmod a+x /root/kapot-scheduler && \
+    chmod a+x /root/kapot-executor
 
 # populate some sample data for ListingSchemaProvider
 RUN mkdir -p /data && \
@@ -42,10 +42,10 @@ RUN mkdir -p /data && \
 ENV DATAFUSION_CATALOG_LOCATION=/data
 ENV DATAFUSION_CATALOG_TYPE=csv
 
-# Expose Ballista Scheduler gRPC port
+# Expose kapot Scheduler gRPC port
 EXPOSE 50050
 
-# Expose Ballista Executor gRPC port
+# Expose kapot Executor gRPC port
 EXPOSE 50051
 
 COPY dev/docker/standalone-entrypoint.sh /root/standalone-entrypoint.sh

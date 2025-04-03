@@ -1,0 +1,82 @@
+// Licensed to the Apache Software Foundation (ASF) under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ASF licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+//! kapot Rust executor binary.
+
+use kapot_core::config::LogRotationPolicy;
+use kapot_core::print_version;
+use kapot_executor::config::prelude::*;
+use kapot_executor::executor_process::{
+    start_executor_process, ExecutorProcessConfig,
+};
+use std::env;
+use std::sync::Arc;
+use tracing_subscriber::EnvFilter;
+
+#[cfg(feature = "mimalloc")]
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
+#[tokio::main]
+async fn main() -> kapot_core::error::Result<()> {
+    // parse command-line arguments
+    let (opt, _remaining_args) =
+        Config::including_optional_config_files(&["/etc/kapot/executor.toml"])
+            .unwrap_or_exit();
+
+    if opt.version {
+        print_version();
+        std::process::exit(0);
+    }
+
+    let config: ExecutorProcessConfig = opt.try_into()?;
+
+    let rust_log = env::var(EnvFilter::DEFAULT_ENV);
+    let log_filter =
+        EnvFilter::new(rust_log.unwrap_or(config.special_mod_log_level.clone()));
+
+    let tracing = tracing_subscriber::fmt()
+        .with_ansi(false)
+        .with_thread_names(config.print_thread_info)
+        .with_thread_ids(config.print_thread_info)
+        .with_env_filter(log_filter);
+
+    // File layer
+    if let Some(log_dir) = &config.log_dir {
+        let log_file = match config.log_rotation_policy {
+            LogRotationPolicy::Minutely => tracing_appender::rolling::minutely(
+                log_dir,
+                config.log_file_name_prefix(),
+            ),
+            LogRotationPolicy::Hourly => {
+                tracing_appender::rolling::hourly(log_dir, config.log_file_name_prefix())
+            }
+            LogRotationPolicy::Daily => {
+                tracing_appender::rolling::daily(log_dir, config.log_file_name_prefix())
+            }
+            LogRotationPolicy::Never => {
+                tracing_appender::rolling::never(log_dir, config.log_file_name_prefix())
+            }
+        };
+
+        tracing.with_writer(log_file).init();
+    } else {
+        tracing.init();
+    }
+
+    start_executor_process(Arc::new(config)).await
+}

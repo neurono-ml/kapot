@@ -19,4 +19,4 @@
 
 set -e
 
-/root/ballista-scheduler "$@"
+/root/kapot-scheduler "$@"

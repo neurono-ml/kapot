@@ -20,10 +20,10 @@
 set -e
 
 echo "Starting for scheduler..."
-/root/ballista-scheduler &
+/root/kapot-scheduler &
 while ! nc -z 127.0.0.1 50050; do
   sleep 1
 done
 
 echo "Starting executor"
-/root/ballista-executor
+/root/kapot-executor

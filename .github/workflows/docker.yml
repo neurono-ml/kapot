@@ -28,4 +28,4 @@ jobs:
       - name: Installs Rust and Cargo
         run: curl -y --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
       - name: Run script
-        run: ./dev/build-ballista-docker.sh
+        run: ./dev/build-kapot-docker.sh

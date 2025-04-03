@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-# Script that updates verions for ballista crates, locally
+# Script that updates verions for kapot crates, locally
 #
 # dependencies:
 # pip install tomlkit
@@ -35,22 +35,22 @@ def update_cargo_toml(cargo_toml: str, new_version: str):
         data = f.read()
 
     doc = tomlkit.parse(data)
-    if "ballista/" in cargo_toml or "ballista-cli/" in cargo_toml:
+    if "kapot/" in cargo_toml or "kapot-cli/" in cargo_toml:
         doc.get('package')['version'] = new_version
 
-    # ballista crates also depend on each other
-    ballista_deps = (
-        'ballista',
-        'ballista-core',
-        'ballista-executor',
-        'ballista-scheduler',
-        'ballista-cli',
+    # kapot crates also depend on each other
+    kapot_deps = (
+        'kapot',
+        'kapot-core',
+        'kapot-executor',
+        'kapot-scheduler',
+        'kapot-cli',
     )
-    for ballista_dep in ballista_deps:
-        dep = doc.get('dependencies', {}).get(ballista_dep)
+    for kapot_dep in kapot_deps:
+        dep = doc.get('dependencies', {}).get(kapot_dep)
         if dep is not None:
             dep['version'] = new_version
-        dep = doc.get('dev-dependencies', {}).get(ballista_dep)
+        dep = doc.get('dev-dependencies', {}).get(kapot_dep)
         if dep is not None:
             dep['version'] = new_version
 
@@ -59,10 +59,10 @@ def update_cargo_toml(cargo_toml: str, new_version: str):
 
 
 def update_docker_compose(docker_compose_path: str, new_version: str):
-    print(f'Updating ballista versions in {docker_compose_path}')
+    print(f'Updating kapot versions in {docker_compose_path}')
     with open(docker_compose_path, "r+") as fd:
         data = fd.read()
-        pattern = re.compile(r'(^\s+image:\sballista:)\d+\.\d+\.\d+(-SNAPSHOT)?', re.MULTILINE)
+        pattern = re.compile(r'(^\s+image:\skapot:)\d+\.\d+\.\d+(-SNAPSHOT)?', re.MULTILINE)
         data = pattern.sub(r"\g<1>"+new_version, data)
         fd.truncate(0)
         fd.seek(0)
@@ -70,28 +70,28 @@ def update_docker_compose(docker_compose_path: str, new_version: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Update ballista crate versions.')
-    parser.add_argument('new_version', type=str, help='new ballista version')
+    parser = argparse.ArgumentParser(description='Update kapot crate versions.')
+    parser.add_argument('new_version', type=str, help='new kapot version')
     args = parser.parse_args()
 
     repo_root = Path(__file__).parent.parent.absolute()
-    ballista_crates = set([
+    kapot_crates = set([
         os.path.join(repo_root, rel_path, "Cargo.toml")
         for rel_path in [
-            'ballista-cli',
-            'ballista/core',
-            'ballista/scheduler',
-            'ballista/executor',
-            'ballista/client',
+            'kapot-cli',
+            'kapot/core',
+            'kapot/scheduler',
+            'kapot/executor',
+            'kapot/client',
             'benchmarks',
             'examples',
         ]
     ])
     new_version = args.new_version
 
-    print(f'Updating ballista versions in {repo_root} to {new_version}')
+    print(f'Updating kapot versions in {repo_root} to {new_version}')
 
-    for cargo_toml in ballista_crates:
+    for cargo_toml in kapot_crates:
         update_cargo_toml(cargo_toml, new_version)
 
     for path in (

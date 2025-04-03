@@ -1,6 +1,0 @@
-datafusion==43.1.0
-pyarrow
-pytest
-maturin==1.5.1
-cloudpickle
-pandas

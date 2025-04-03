@@ -23,8 +23,8 @@ ENV RELEASE_FLAG=${RELEASE_FLAG}
 ENV RUST_LOG=info
 ENV RUST_BACKTRACE=full
 
-COPY target/$RELEASE_FLAG/ballista-scheduler /root/ballista-scheduler
-COPY target/$RELEASE_FLAG/ballista-executor /root/ballista-executor
+COPY target/$RELEASE_FLAG/kapot-scheduler /root/kapot-scheduler
+COPY target/$RELEASE_FLAG/kapot-executor /root/kapot-executor
 COPY target/$RELEASE_FLAG/tpch /root/tpch
 
 COPY benchmarks/run.sh /root/run.sh

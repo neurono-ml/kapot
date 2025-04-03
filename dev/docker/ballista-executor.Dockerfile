@@ -25,9 +25,9 @@ ENV RUST_BACKTRACE=full
 
 RUN apt-get update && apt-get install -y netcat
 
-COPY target/$RELEASE_FLAG/ballista-executor /root/ballista-executor
+COPY target/$RELEASE_FLAG/kapot-executor /root/kapot-executor
 
-# Expose Ballista Executor gRPC port
+# Expose kapot Executor gRPC port
 EXPOSE 50051
 
 COPY dev/docker/executor-entrypoint.sh /root/executor-entrypoint.sh

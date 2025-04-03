@@ -43,7 +43,7 @@ fi
 version=$1
 rc=$2
 
-tmp_dir=tmp-apache-datafusion-ballista-dist
+tmp_dir=tmp-apache-datafusion-kapot-dist
 
 echo "Recreate temporary directory: ${tmp_dir}"
 rm -rf ${tmp_dir}
@@ -52,20 +52,20 @@ mkdir -p ${tmp_dir}
 echo "Clone dev dist repository"
 svn \
   co \
-  https://dist.apache.org/repos/dist/dev/datafusion/apache-datafusion-ballista-${version}-rc${rc} \
+  https://dist.apache.org/repos/dist/dev/datafusion/apache-datafusion-kapot-${version}-rc${rc} \
   ${tmp_dir}/dev
 
 echo "Clone release dist repository"
 svn co https://dist.apache.org/repos/dist/release/datafusion ${tmp_dir}/release
 
 echo "Copy ${version}-rc${rc} to release working copy"
-release_version=datafusion-ballista-${version}
+release_version=datafusion-kapot-${version}
 mkdir -p ${tmp_dir}/release/${release_version}
 cp -r ${tmp_dir}/dev/* ${tmp_dir}/release/${release_version}/
 svn add ${tmp_dir}/release/${release_version}
 
 echo "Commit release"
-svn ci -m "Apache DataFusion Ballista ${version}" ${tmp_dir}/release
+svn ci -m "Apache DataFusion kapot ${version}" ${tmp_dir}/release
 
 echo "Clean up"
 rm -rf ${tmp_dir}

@@ -45,7 +45,7 @@ download_dist_file() {
 }
 
 download_rc_file() {
-  download_dist_file apache-datafusion-ballista-${VERSION}-rc${RC_NUMBER}/$1
+  download_dist_file apache-datafusion-kapot-${VERSION}-rc${RC_NUMBER}/$1
 }
 
 import_gpg_keys() {
@@ -141,9 +141,9 @@ test_source_distribution() {
     exit 1
   fi
 
-  # Note can't verify other ballista crates as they depend
-  # on ballista-core which isn't published yet
-  pushd ballista/core
+  # Note can't verify other kapot crates as they depend
+  # on kapot-core which isn't published yet
+  pushd kapot/core
     cargo publish --dry-run
   popd
 }
@@ -154,7 +154,7 @@ setup_tempdir "datafusion-${VERSION}"
 echo "Working in sandbox ${DATAFUSION_TMPDIR}"
 cd ${DATAFUSION_TMPDIR}
 
-dist_name="apache-datafusion-ballista-${VERSION}"
+dist_name="apache-datafusion-kapot-${VERSION}"
 import_gpg_keys
 fetch_archive ${dist_name}
 tar xf ${dist_name}.tar.gz

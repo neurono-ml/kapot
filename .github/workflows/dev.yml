@@ -66,8 +66,8 @@ jobs:
           #
           # ignore subproject CHANGELOG.md because they are machine generated
           npx prettier@2.3.2 --write \
-            '{ballista,docs}/**/*.md' \
-            '!ballista/CHANGELOG.md' \
+            '{kapot,docs}/**/*.md' \
+            '!kapot/CHANGELOG.md' \
             README.md \
             CONTRIBUTING.md 
           git diff --exit-code

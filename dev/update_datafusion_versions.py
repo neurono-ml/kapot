@@ -40,12 +40,12 @@ crates = {
     'datafusion-row': 'datafusion/row/Cargo.toml'
 }
 
-ballista_crates = {
-    'ballista-cli': 'ballista-cli/Cargo.toml',
-    'core': 'ballista/core/Cargo.toml',
-    'client': 'ballista/client/Cargo.toml',
-    'executor': 'ballista/executor/Cargo.toml',
-    'scheduler': 'ballista/scheduler/Cargo.toml',
+kapot_crates = {
+    'kapot-cli': 'kapot-cli/Cargo.toml',
+    'core': 'kapot/core/Cargo.toml',
+    'client': 'kapot/client/Cargo.toml',
+    'executor': 'kapot/executor/Cargo.toml',
+    'scheduler': 'kapot/scheduler/Cargo.toml',
 }
 
 def update_datafusion_version(cargo_toml: str, new_version: str):
@@ -110,7 +110,7 @@ def main():
     print(f'Updating datafusion dependency versions in {repo_root} to {new_version}')
     for cargo_toml in crates.values():
         update_downstream_versions(cargo_toml, new_version)
-    for cargo_toml in ballista_crates.values():
+    for cargo_toml in kapot_crates.values():
         update_downstream_versions(cargo_toml, new_version)
 
     update_docs("README.md", new_version)
