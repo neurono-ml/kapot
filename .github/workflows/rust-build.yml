@@ -1,0 +1,65 @@
+name: Multiplatform Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build for ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Linux targets
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            linker: ''
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            linker: aarch64-linux-gnu-gcc
+
+          # macOS targets
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            linker: ''
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            linker: ''
+
+          # Windows targets
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            linker: ''
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
+            linker: ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest' && matrix.linker != ''
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: ${{ matrix.linker }}
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/
