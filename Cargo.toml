@@ -21,7 +21,7 @@ members = ["kapot/kapot-cli", "kapot/client", "kapot/core", "kapot/executor", "k
 resolver = "2"
 
 [workspace.package]
-version = "1.0.0"
+version = "2.0.0"
 name = "kapot"
 
 [workspace.dependencies]

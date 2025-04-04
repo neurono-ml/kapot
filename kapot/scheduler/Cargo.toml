@@ -19,7 +19,7 @@
 name = "kapot-scheduler"
 description = "kapot Distributed Compute - Scheduler"
 license = "Apache-2.0"
-version = "44.0.0"
+version = { workspace = true }
 homepage = "https://github.com/apache/arrow-kapot"
 repository = "https://github.com/apache/arrow-kapot"
 readme = "README.md"
@@ -53,7 +53,7 @@ mgc = ["kapot-core/mgc"]
 arrow-flight = { workspace = true }
 async-trait = { workspace = true }
 axum = "0.7.7"
-kapot-core = { path = "../core", version = "44.0.0" }
+kapot-core = { path = "../core", version = "2.0.0" }
 base64 = { version = "0.22", optional = true }
 clap = { workspace = true, optional = true }
 configure_me = { workspace = true, optional = true }

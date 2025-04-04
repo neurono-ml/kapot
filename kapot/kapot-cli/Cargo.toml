@@ -18,7 +18,7 @@
 [package]
 name = "kapot-cli"
 description = "Command Line Client for kapot distributed query engine."
-version = "44.0.0"
+version = { workspace = true }
 authors = ["Apache DataFusion <dev@datafusion.apache.org>"]
 edition = "2021"
 keywords = ["kapot", "cli"]
@@ -28,7 +28,7 @@ repository = "https://github.com/apache/arrow-kapot"
 readme = "README.md"
 
 [dependencies]
-kapot = { path = "../client", version = "44.0.0", features = ["standalone"] }
+kapot = { path = "../client", version = "2.0.0", features = ["standalone"] }
 clap = { workspace = true, features = ["derive", "cargo"] }
 datafusion = { workspace = true }
 datafusion-cli = { workspace = true }

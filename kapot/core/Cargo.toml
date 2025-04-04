@@ -19,7 +19,7 @@
 name = "kapot-core"
 description = "kapot Distributed Compute"
 license = "Apache-2.0"
-version = "44.0.0"
+version = { workspace = true }
 homepage = "https://github.com/apache/arrow-kapot"
 repository = "https://github.com/apache/arrow-kapot"
 readme = "README.md"

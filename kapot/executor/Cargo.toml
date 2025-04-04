@@ -19,7 +19,7 @@
 name = "kapot-executor"
 description = "kapot Distributed Compute - Executor"
 license = "Apache-2.0"
-version = "44.0.0"
+version = { workspace = true }
 homepage = "https://github.com/apache/arrow-kapot"
 repository = "https://github.com/apache/arrow-kapot"
 readme = "README.md"
@@ -49,7 +49,7 @@ mgc = ["kapot-core/mgc"]
 arrow = { workspace = true }
 arrow-flight = { workspace = true }
 async-trait = { workspace = true }
-kapot-core = { path = "../core", version = "44.0.0" }
+kapot-core = { path = "../core", version = "2.0.0" }
 configure_me = { workspace = true, optional = true }
 dashmap = { workspace = true }
 datafusion = { workspace = true }
