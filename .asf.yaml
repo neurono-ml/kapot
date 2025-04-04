@@ -16,23 +16,22 @@
 # under the License.
 
 notifications:
-  commits:      commits@datafusion.apache.org
-  issues:       github@datafusion.apache.org
-  pullrequests: github@datafusion.apache.org
-  jira_options: link label worklog
+  commits:      kapot+commits@neurono.ai
+  issues:       kapot+issues@neurono.ai
+  pullrequests: kapot+pullrequests@neurono.ai
 github:
-  description: "Apache DataFusion kapot Distributed Query Engine"
-  homepage: https://datafusion.apache.org/kapot
+  description: "Kapôt, a Kubernetes Distributed Query Engine"
+  homepage: https://opensource.neurono.ai/kapot
   labels:
     - arrow
     - big-data
     - dataframe
     - distributed
     - olap
-    - python
     - query-engine
     - rust
     - sql
+    - kubernetes
   enabled_merge_buttons:
     squash: true
     merge: false

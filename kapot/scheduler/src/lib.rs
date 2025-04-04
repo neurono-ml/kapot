@@ -27,6 +27,7 @@ pub mod scheduler_process;
 pub mod scheduler_server;
 pub mod standalone;
 pub mod state;
+pub mod wire_service;
 
 #[cfg(feature = "flight-sql")]
 pub mod flight_sql;
